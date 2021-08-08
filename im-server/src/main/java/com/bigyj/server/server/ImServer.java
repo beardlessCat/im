@@ -6,38 +6,30 @@ import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
 
-@Service("inServer")
+@Service("imServer")
 @Slf4j
 public class ImServer {
     private EventLoopGroup bossGroup ;
     private EventLoopGroup workerGroup ;
-    @Value("${chat.server.port}")
-    private int port;
-
+    //@Value("${chat.server.port}")
+    private int port = 8081;
     public void startImServer() {
-        ServerBootstrap serverBootstrap =
-                new ServerBootstrap();
+        bossGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
+        ServerBootstrap serverBootstrap = new ServerBootstrap();
         try {
-            serverBootstrap.group(bossGroup, workerGroup);
+            serverBootstrap.group(bossGroup, workerGroup)
             //2 设置nio类型的channel
-            serverBootstrap.channel(NioServerSocketChannel.class);
-            //3 设置监听端口
-            serverBootstrap.localAddress(new InetSocketAddress(port));
-            //4 设置通道选项
-            //            b.option(ChannelOption.SO_KEEPALIVE, true);
-            serverBootstrap.option(ChannelOption.ALLOCATOR,
-                    PooledByteBufAllocator.DEFAULT);
-
-            //5 装配流水线
-            serverBootstrap.childHandler(new ImServerInitializer());
-            // 6 开始绑定server
+            .channel(NioServerSocketChannel.class)
+            .childHandler(new ImServerInitializer())
+                    .localAddress(new InetSocketAddress(port));
             // 通过调用sync同步方法阻塞直到绑定成功
             ChannelFuture channelFuture = serverBootstrap.bind().sync();
             logger.info(
