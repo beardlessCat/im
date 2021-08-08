@@ -1,0 +1,6 @@
+server:
+  port: 8090
+chat:
+  server:
+    ip: 127.0.0.1
+    port: 8081

@@ -1,0 +1,5 @@
+server:
+  port: 8080
+chat:
+  server:
+    port: 8081

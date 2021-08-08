@@ -12,6 +12,8 @@ repositories {
 dependencies {
     implementation project(':im-common')
     implementation libraries.netty
+    implementation libraries.springBootStarterWeb
+
 }
 
 
