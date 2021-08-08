@@ -2,7 +2,6 @@ package com.bigyj.client.client;
 
 import com.bigyj.client.initializer.ImChatClientInitializer;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
