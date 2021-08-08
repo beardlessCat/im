@@ -1,5 +1,6 @@
 package com.bigyj.client.client;
 
+import com.bigyj.client.initializer.ImChatClientInitializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
@@ -24,18 +25,7 @@ public class ImClient {
     private EventLoopGroup eventLoopGroup;
 
     public ImClient() {
-
-        /**
-         * 客户端的是Bootstrap，服务端的则是 ServerBootstrap。
-         * 都是AbstractBootstrap的子类。
-         **/
-
-        /**
-         * 通过nio方式来接收连接和处理连接
-         */
-
         eventLoopGroup = new NioEventLoopGroup();
-
     }
 
     /**
@@ -47,11 +37,11 @@ public class ImClient {
             bootstrap.group(eventLoopGroup);
             bootstrap.channel(NioSocketChannel.class);
             bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-            bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+            //bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
             bootstrap.remoteAddress(host, port);
 
             // 设置通道初始化
-            bootstrap.handler(null);
+            bootstrap.handler(new ImChatClientInitializer());
             logger.info("客户端开始连接");
 
             ChannelFuture f = bootstrap.connect();//异步发起连接
