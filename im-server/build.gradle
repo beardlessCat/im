@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group 'com.bigyj'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':im-common')
+    implementation libraries.netty
+}
+
+

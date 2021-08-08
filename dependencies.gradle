@@ -1,0 +1,45 @@
+ext {
+    versions = [:]
+    pluginIds = [:]
+    libraries = [:]
+}
+
+versions.springBoot = "2.3.4.RELEASE"
+versions.gson = "2.8.5"
+versions.netty = "4.1.30.Final"
+
+pluginIds.springBoot = "org.springframework.boot"
+pluginIds.springDependencyManager = "io.spring.dependency-management"
+
+libraries.springBootPlugin = "org.springframework.boot:spring-boot-gradle-plugin:${versions.springBoot}"
+libraries.springDependencyManagerPlugin = "io.spring.gradle:dependency-management-plugin:1.0.10.RELEASE"
+
+libraries.springBootBom = "org.springframework.boot:spring-boot-dependencies:${versions.springBoot}"
+
+libraries.springBootConfigurationProcessor = "org.springframework.boot:spring-boot-configuration-processor"
+libraries.springBootStarterAop = "org.springframework.boot:spring-boot-starter-aop"
+libraries.springBootStarterDataJdbc = "org.springframework.boot:spring-boot-starter-data-jdbc"
+libraries.springBootStarterDataRedis = "org.springframework.boot:spring-boot-starter-data-redis"
+libraries.springBootStarterJooq = "org.springframework.boot:spring-boot-starter-jooq"
+libraries.springBootStarterJson = "org.springframework.boot:spring-boot-starter-json"
+libraries.springBootStarterLog4j2 = "org.springframework.boot:spring-boot-starter-log4j2"
+libraries.springBootStarterThymeleaf = "org.springframework.boot:spring-boot-starter-thymeleaf"
+libraries.springBootStarterValidation = "org.springframework.boot:spring-boot-starter-validation"
+libraries.springBootStarterWeb = "org.springframework.boot:spring-boot-starter-web"
+libraries.springDataCommons = "org.springframework.data:spring-data-commons"
+libraries.commonsLang3 = 'org.apache.commons:commons-lang3'
+libraries.httpComponents = "org.apache.httpcomponents:httpclient"
+libraries.jpa = "jakarta.persistence:jakarta.persistence-api"
+libraries.jaxbApi = 'javax.xml.bind:jaxb-api'
+libraries.jaxbRuntime = 'org.glassfish.jaxb:jaxb-runtime'
+libraries.jsonLib = "net.sf.json-lib:json-lib:2.4:jdk15"
+libraries.lombok = "org.projectlombok:lombok"
+libraries.micrometerRegistryPrometheus = "io.micrometer:micrometer-registry-prometheus"
+libraries.okhttp3 = "com.squareup.okhttp3:okhttp"
+libraries.servletApi = "jakarta.servlet:jakarta.servlet-api"
+libraries.fastjson='com.alibaba:fastjson:1.2.76'
+libraries.redisson='org.redisson:redisson:3.12.5'
+libraries.protostuffCore ='io.protostuff:protostuff-core:1.6.0'
+libraries.protostuffRuntime ='io.protostuff:protostuff-runtime:1.6.0'
+libraries.gson ='com.google.code.gson:gson:2.8.5'
+libraries.netty='io.netty:netty-all:4.1.30.Final'

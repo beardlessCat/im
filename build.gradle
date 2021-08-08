@@ -1,0 +1,64 @@
+buildscript {
+    apply from: "dependencies.gradle"
+
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin/' }
+        maven { url 'https://plugins.gradle.org/m2/' }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath libraries.springBootPlugin
+        classpath libraries.springDependencyManagerPlugin
+    }
+}
+
+allprojects {
+    apply plugin: 'idea'
+
+    group = 'com.bigyj'
+    version '1.0.0-SNAPSHOT'
+
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: pluginIds.springDependencyManager
+
+    sourceCompatibility = '8'
+
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencies {
+        compileOnly libraries.lombok
+        annotationProcessor libraries.lombok
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom libraries.springBootBom
+        }
+    }
+
+    tasks.withType(Javadoc) {
+        if (JavaVersion.current().isJava8Compatible()) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+        if (JavaVersion.current().isJava9Compatible()) {
+            options.addBooleanOption('html5', true)
+        }
+    }
+}
