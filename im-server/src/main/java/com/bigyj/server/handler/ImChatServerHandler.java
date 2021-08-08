@@ -48,6 +48,7 @@ public class ImChatServerHandler extends SimpleChannelInboundHandler<String> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
         System.out.println(channel.remoteAddress() + "上线了");
+        channel.writeAndFlush("你好呀");
     }
 
     @Override

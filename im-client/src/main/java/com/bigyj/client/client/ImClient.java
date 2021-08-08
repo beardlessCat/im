@@ -1,7 +1,8 @@
 package com.bigyj.client.client;
 
-import com.bigyj.client.initializer.ImChatClientInitializer;
+import com.bigyj.client.initializer.ImClientInitializer;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -10,6 +11,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 @Service("imClient")
 @Slf4j
@@ -33,25 +37,16 @@ public class ImClient {
     public void doConnect() {
         try {
             bootstrap = new Bootstrap();
-            bootstrap.group(eventLoopGroup);
-            bootstrap.channel(NioSocketChannel.class);
-            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-            //bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
-            bootstrap.remoteAddress(host, port);
-
-            // 设置通道初始化
-            bootstrap.handler(new ImChatClientInitializer());
-            logger.info("客户端开始连接");
-
-            ChannelFuture f = bootstrap.connect();//异步发起连接
-            //f.addListener(connectedListener);
-
-
-            // 阻塞
-            // f.channel().closeFuture().sync();
-
-        } catch (Exception e) {
-            logger.info("客户端连接失败!" + e.getMessage());
+            bootstrap.group(eventLoopGroup)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ImClientInitializer());
+            Channel channel = bootstrap.connect(host, port).sync().channel();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+            for (;;){
+                channel.writeAndFlush(bufferedReader.readLine()+"\r\n");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
