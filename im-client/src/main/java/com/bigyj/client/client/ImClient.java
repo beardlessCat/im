@@ -3,17 +3,12 @@ package com.bigyj.client.client;
 import com.bigyj.client.initializer.ImClientInitializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 @Service("imClient")
 @Slf4j
@@ -41,10 +36,7 @@ public class ImClient {
                     .channel(NioSocketChannel.class)
                     .handler(new ImClientInitializer());
             Channel channel = bootstrap.connect(host, port).sync().channel();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-            for (;;){
-                channel.writeAndFlush(bufferedReader.readLine()+"\r\n");
-            }
+            ChannelHolder.channel = channel;
         }catch (Exception e){
             e.printStackTrace();
         }
