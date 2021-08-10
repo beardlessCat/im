@@ -1,12 +1,11 @@
 package com.bigyj.client.manager;
 
 import com.bigyj.client.client.ImClient;
+import com.bigyj.client.sender.ChatMsgSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Scanner;
 
 @Service("commandManager")
@@ -14,10 +13,10 @@ import java.util.Scanner;
 public class CommandManager {
     @Autowired
     private ImClient imClient;
-
+    @Autowired
+    private ChatMsgSender chatMsgSender ;
     public void startClient() {
         imClient.doConnect();
-
         this.startCommand();
     }
 
@@ -30,6 +29,10 @@ public class CommandManager {
                 logger.error("开始登录，请输入用户名及密码");
             }else if("2".equals(key)) {
                 logger.error("开始聊天，请输入聊天内容");
+                while (true) {
+                    String msg = scanner.next();
+                    chatMsgSender.sendMsg(msg);
+                }
             }else if("3".equals(key)){
                 logger.error("您已退出！");
             }else {

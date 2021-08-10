@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ChatMsgSender implements MsgSender{
     @Override
-    public void sendMsg(String meg) {
+    public void sendMsg(String msg) {
         Channel channel = ChannelHolder.channel;
-        channel.writeAndFlush(channel);
+        channel.writeAndFlush(msg+"\r\n");
     }
 }
