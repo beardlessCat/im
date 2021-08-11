@@ -1,17 +1,25 @@
 package com.bigyj.server.handler;
 
+import com.bigyj.entity.User;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.AttributeKey;
+import io.netty.util.AttributeMap;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 public class ImChatServerHandler extends SimpleChannelInboundHandler<String> {
+    public static final AttributeKey<User> USER_KEY
+            = AttributeKey.valueOf("USER_KEY");
+
     private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
         Channel channel = ctx.channel();
+        ctx.channel().attr(USER_KEY).set(new User());
+        User user = ctx.channel().attr(USER_KEY).get();
         //遍历在线客户端
         channelGroup.forEach(ch -> {
             //不是当前客户端时进行消息广播

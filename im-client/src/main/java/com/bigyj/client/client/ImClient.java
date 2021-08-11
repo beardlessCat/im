@@ -29,17 +29,20 @@ public class ImClient {
     /**
      * 重连
      */
-    public void doConnect() {
+    public Channel doConnect() {
+        Channel channel = null;
         try {
             bootstrap = new Bootstrap();
             bootstrap.group(eventLoopGroup)
                     .channel(NioSocketChannel.class)
                     .handler(new ImClientInitializer());
-            Channel channel = bootstrap.connect(host, port).sync().channel();
+            channel = bootstrap.connect(host, port).sync().channel();
             ChannelHolder.channel = channel;
+            return channel ;
         }catch (Exception e){
             e.printStackTrace();
         }
+        return channel;
     }
 
     public void close() {
