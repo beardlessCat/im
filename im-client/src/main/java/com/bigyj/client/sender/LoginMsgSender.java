@@ -1,6 +1,6 @@
 package com.bigyj.client.sender;
 
-import com.bigyj.client.client.ChannelHolder;
+import com.bigyj.client.client.ClientSession;
 import com.bigyj.entity.Msg;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
@@ -11,7 +11,8 @@ public class LoginMsgSender extends MsgSender{
 
     @Override
     public void sendMsg(Msg msg) {
-        Channel channel = ChannelHolder.channel;
+        ClientSession session = getSession();
+        Channel channel = session.getChannel();
         channel.writeAndFlush(new Gson().toJson(msg)+"\r\n");
     }
 }

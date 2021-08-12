@@ -40,6 +40,11 @@ public class CommandManager {
             Scanner scanner = new Scanner(System.in);
             String key = scanner.next();
             if("1".equals(key)){
+                boolean login = isLogin();
+                if(login){
+                    logger.error("您已登录！");
+                    continue;
+                }
                 logger.error("开始登录，请输入用户名及密码");
                 User user = new User();
                 user.setUid("username");
@@ -54,10 +59,18 @@ public class CommandManager {
                 msg.setMsgType(Msg.MsgType.LOGIN_REQUEST);
                 loginMsgSender.sendMsg(msg);
             }else if("2".equals(key)) {
+                boolean login = isLogin();
+                if(!login){
+                    logger.error("请先登录");
+                    continue;
+                }
                 logger.error("开始聊天，请输入聊天内容");
                 while (true) {
                     String msg = scanner.next();
-                    //chatMsgSender.sendMsg(msg);
+                    Msg chatMsg = new Msg();
+                    chatMsg.setMsgType(Msg.MsgType.CHAT);
+                    chatMsgSender.setSession(session);
+                    chatMsgSender.sendMsg(chatMsg);
                 }
             }else if("3".equals(key)){
                 logger.error("您已退出！");
@@ -65,5 +78,13 @@ public class CommandManager {
                 logger.error("无法识别指令[{}]，请重新输入!",key);
             }
         }
+    }
+    public boolean isLogin() {
+        if (null == session) {
+            logger.info("session is null");
+            return false;
+        }
+
+        return session.isLogin();
     }
 }

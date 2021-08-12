@@ -3,6 +3,15 @@ package com.bigyj.entity;
 public class Msg {
     private MsgType msgType ;
     private User user;
+    private boolean success ;
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 
     public MsgType getMsgType() {
         return msgType;

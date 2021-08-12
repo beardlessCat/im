@@ -1,16 +1,27 @@
 package com.bigyj.client.client;
 
+import com.bigyj.entity.Msg;
 import com.bigyj.entity.User;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
-import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ClientSession {
     public static final AttributeKey<ClientSession> SESSION_KEY =
             AttributeKey.valueOf("SESSION_KEY");
     private Channel channel;
     private User user;
+    private boolean isLogin = false;
+
+    public boolean isLogin() {
+        return isLogin;
+    }
+
+    public void setLogin(boolean login) {
+        isLogin = login;
+    }
 
     /**
      * 保存登录后的服务端sessionid
@@ -50,5 +61,14 @@ public class ClientSession {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public static void loginSuccess(
+            ChannelHandlerContext ctx, Msg msg) {
+        Channel channel = ctx.channel();
+        ClientSession session = channel.attr(ClientSession.SESSION_KEY).get();
+        //session.setSessionId(msg.getSessionId());
+        session.setLogin(true);
+        logger.info("登录成功");
     }
 }

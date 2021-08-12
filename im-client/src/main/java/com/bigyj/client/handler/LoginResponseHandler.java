@@ -1,6 +1,7 @@
 package com.bigyj.client.handler;
 
 import com.alibaba.fastjson.JSONObject;
+import com.bigyj.client.client.ClientSession;
 import com.bigyj.entity.Msg;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -17,12 +18,16 @@ public class LoginResponseHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 		logger.error("收到登录响应消息"+ msg);
-		//保存channel与用户的关系信息 fixme
-
-		//增加聊天的handler
-		ctx.pipeline().addAfter("login", "chat",  new ImClientHandler());
-		//移除登录handler
-		ctx.pipeline().remove("login");
+		//判断登录成功还是登录失败
+		if(msgObject.isSuccess()){
+			//调整客户端登录状态
+			ClientSession.loginSuccess(ctx,msgObject);
+			//增加聊天的handler
+			ctx.pipeline().addAfter("login", "chat",  new ImClientHandler());
+			//移除登录handler
+			ctx.pipeline().remove(this);
+		}else {
+			logger.error("用户登录失败");
+		}
 	}
-
 }

@@ -37,7 +37,6 @@ public class ImClient {
                     .channel(NioSocketChannel.class)
                     .handler(new ImClientInitializer());
             channel = bootstrap.connect(host, port).sync().channel();
-            ChannelHolder.channel = channel;
             return channel ;
         }catch (Exception e){
             e.printStackTrace();
