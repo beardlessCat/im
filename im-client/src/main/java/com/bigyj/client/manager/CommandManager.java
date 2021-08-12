@@ -51,7 +51,7 @@ public class CommandManager {
                 loginMsgSender.setSession(session);
                 Msg msg = new Msg();
                 msg.setUser(user);
-                msg.setMsgType(Msg.MsgType.LOGIN);
+                msg.setMsgType(Msg.MsgType.LOGIN_REQUEST);
                 loginMsgSender.sendMsg(msg);
             }else if("2".equals(key)) {
                 logger.error("开始聊天，请输入聊天内容");

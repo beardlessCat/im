@@ -1,6 +1,6 @@
 package com.bigyj.client.initializer;
 
-import com.bigyj.client.handler.ImClientHandler;
+import com.bigyj.client.handler.LoginResponseHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -17,6 +17,6 @@ public class ImClientInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new DelimiterBasedFrameDecoder(4096, Delimiters.lineDelimiter()));
         pipeline.addLast(new StringDecoder(CharsetUtil.UTF_8));
         pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));
-        pipeline.addLast(new ImClientHandler());
+        pipeline.addLast("login",new LoginResponseHandler());
     }
 }
