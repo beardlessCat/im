@@ -47,7 +47,7 @@ public class CommandManager {
                 }
                 logger.error("开始登录，请输入用户名及密码");
                 User user = new User();
-                user.setUid("username");
+                user.setUid("1");
                 user.setToken("123456");
                 user.setDevId("1111");
                 user.setPlatform(1);
@@ -69,6 +69,7 @@ public class CommandManager {
                     String msg = scanner.next();
                     Msg chatMsg = new Msg();
                     chatMsg.setMsgType(Msg.MsgType.CHAT);
+                    chatMsg.setToUserId("1");
                     chatMsgSender.setSession(session);
                     chatMsgSender.sendMsg(chatMsg);
                 }

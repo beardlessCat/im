@@ -4,7 +4,7 @@ public class Msg {
     private MsgType msgType ;
     private User user;
     private boolean success ;
-
+    private String toUserId ;
     public boolean isSuccess() {
         return success;
     }
@@ -27,6 +27,14 @@ public class Msg {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getToUserId() {
+        return toUserId;
+    }
+
+    public void setToUserId(String toUserId) {
+        this.toUserId = toUserId;
     }
 
     public enum MsgType

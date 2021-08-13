@@ -1,6 +1,7 @@
 package com.bigyj.server.server;
 
 import com.bigyj.entity.User;
+import com.bigyj.server.holder.ServerSessionHolder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
@@ -23,6 +24,7 @@ public class ServerSession {
     private User user;
 
     private final String sessionId;
+    private boolean isLogin = false;
 
     public ServerSession(Channel channel) {
         this.channel = channel;
@@ -36,5 +38,16 @@ public class ServerSession {
     public static ServerSession getSession(ChannelHandlerContext ctx) {
         Channel channel = ctx.channel();
         return channel.attr(ServerSession.SESSION_KEY).get();
+    }
+
+    /**
+     * ServerSession 绑定会话
+     */
+    public ServerSession bind() {
+        logger.info(" ServerSession 绑定会话 " + channel.remoteAddress());
+        channel.attr(ServerSession.SESSION_KEY).set(this);
+        ServerSessionHolder.addServerSession(this);
+        isLogin = true;
+        return this;
     }
 }
