@@ -75,6 +75,15 @@ public class CommandManager {
                 }
             }else if("3".equals(key)){
                 logger.error("您已退出！");
+                if (!isLogin()) {
+                    logger.info("还没有登录，请先登录");
+                    return;
+                }
+                Msg chatMsg = new Msg();
+                chatMsg.setMsgType(Msg.MsgType.CHAT);
+                chatMsg.setToUserId("1");
+                chatMsgSender.setSession(session);
+                chatMsgSender.sendMsg(chatMsg);
             }else {
                 logger.error("无法识别指令[{}]，请重新输入!",key);
             }

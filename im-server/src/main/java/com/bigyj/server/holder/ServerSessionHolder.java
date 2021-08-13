@@ -16,4 +16,10 @@ public class ServerSessionHolder {
 	public static ServerSession getServerSession(String userId){
 		return serverSessions.get(userId);
 	}
+
+	public static ServerSession removeServerSession(String userId){
+		return serverSessions.remove(userId);
+	}
+
+
 }

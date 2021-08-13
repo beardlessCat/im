@@ -42,6 +42,7 @@ public class Msg {
         LOGIN_REQUEST,//登陆请求消息
         LOGIN_RESPONSE,//登陆响应消息
         CHAT,//聊天消息
-        LOGOUT// 退出消息
+        LOGOUT_REQUEST,// 退出请求消息
+        LOGOUT_RESPONSE,// 退出响应消息
     }
 }
