@@ -3,6 +3,8 @@ package com.bigyj.server.server;
 import com.bigyj.entity.User;
 import com.bigyj.server.holder.ServerSessionHolder;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 import lombok.Data;
@@ -49,5 +51,22 @@ public class ServerSession {
         ServerSessionHolder.addServerSession(this);
         isLogin = true;
         return this;
+    }
+
+    public static void closeSession(ChannelHandlerContext ctx) {
+        ServerSession session =
+                ctx.channel().attr(ServerSession.SESSION_KEY).get();
+
+        if (null != session && session.isValid()) {
+            session.close();
+            ServerSessionHolder.removeServerSession(session.getUser().getUid());
+        }
+    }
+
+    public boolean isValid() {
+        return getUser() != null ? true : false;
+    }
+    public synchronized void close() {
+        channel.close();
     }
 }

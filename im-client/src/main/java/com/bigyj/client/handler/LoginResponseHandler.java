@@ -22,12 +22,13 @@ public class LoginResponseHandler extends ChannelInboundHandlerAdapter {
 		if(msgObject.isSuccess()){
 			//调整客户端登录状态
 			ClientSession.loginSuccess(ctx,msgObject);
-			//增加退出的logourResponseHandler
-			ctx.pipeline().addAfter("login","logout",new LogoutResponseHandler());
-			//增加聊天的handler
-			ctx.pipeline().addAfter("logout", "chat",  new ImClientHandler());
 			//移除登录handler
 			ctx.pipeline().remove(this);
+			//增加退出的logourResponseHandler
+			//ctx.pipeline().addAfter("encoder", "heartbeat", new HeartBeatClientHandler());
+			ctx.pipeline().addAfter("encoder","logout",new LogoutResponseHandler());
+			//增加聊天的handler
+			ctx.pipeline().addAfter("encoder", "chat",  new ImClientHandler());
 		}else {
 			logger.error("用户登录失败");
 		}

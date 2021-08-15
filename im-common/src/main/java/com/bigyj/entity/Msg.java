@@ -44,5 +44,7 @@ public class Msg {
         CHAT,//聊天消息
         LOGOUT_REQUEST,// 退出请求消息
         LOGOUT_RESPONSE,// 退出响应消息
+        HEART_BEAT,//心跳
+
     }
 }
