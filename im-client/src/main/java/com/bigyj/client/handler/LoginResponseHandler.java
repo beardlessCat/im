@@ -25,7 +25,7 @@ public class LoginResponseHandler extends ChannelInboundHandlerAdapter {
 			//移除登录handler
 			ctx.pipeline().remove(this);
 			//增加退出的logourResponseHandler
-			//ctx.pipeline().addAfter("encoder", "heartbeat", new HeartBeatClientHandler());
+			ctx.pipeline().addAfter("encoder", "heartbeat", new HeartBeatClientHandler());
 			ctx.pipeline().addAfter("encoder","logout",new LogoutResponseHandler());
 			//增加聊天的handler
 			ctx.pipeline().addAfter("encoder", "chat",  new ImClientHandler());
