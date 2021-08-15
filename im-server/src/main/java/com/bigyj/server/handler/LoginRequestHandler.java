@@ -38,9 +38,10 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void sengLoginResponse(ChannelHandlerContext context,Msg msgObject) {
-        msgObject.setMsgType(Msg.MsgType.LOGIN_RESPONSE);
-        msgObject.setSuccess(true);
+        Msg msg = new Msg.MsgBuilder(Msg.MsgType.LOGIN_RESPONSE, msgObject.getUser())
+                .setSuccess(true)
+                .build();
         Channel channel = context.channel();
-        channel.writeAndFlush(new Gson().toJson(msgObject)+"\r\n");
+        channel.writeAndFlush(new Gson().toJson(msg)+"\r\n");
     }
 }

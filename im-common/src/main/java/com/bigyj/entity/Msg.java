@@ -24,34 +24,37 @@ public class Msg {
      * 消息内容
      */
     private final String content ;
-    public Msg(Builder builder){
-        this.msgType = builder.msgType;
-        this.user = builder.user;
-        this.success = builder.success;
-        this.toUserId = builder.toUserId;
-        this.content = builder.content;
+    public Msg(MsgBuilder msgBuilder){
+        this.msgType = msgBuilder.msgType;
+        this.user = msgBuilder.user;
+        this.success = msgBuilder.success;
+        this.toUserId = msgBuilder.toUserId;
+        this.content = msgBuilder.content;
     }
-    public static class Builder{
+    public static class MsgBuilder {
         private MsgType msgType ;
         private User user;
         private boolean success ;
         private String toUserId ;
         private String content ;
-        public Builder(MsgType msgType,User user){
+        public MsgBuilder(MsgType msgType, User user){
             this.msgType = msgType;
             this.user = user ;
         }
-        public Builder setSuccess(boolean success){
+        public MsgBuilder setSuccess(boolean success){
             this.success = success ;
             return this;
         }
-        public Builder setToUserId(String toUserId){
+        public MsgBuilder setToUserId(String toUserId){
             this.toUserId = toUserId ;
             return this;
         }
-        public Builder setContent(String content){
+        public MsgBuilder setContent(String content){
             this.content = content ;
             return this;
+        }
+        public Msg build(){
+            return new Msg(this);
         }
     }
     public enum MsgType

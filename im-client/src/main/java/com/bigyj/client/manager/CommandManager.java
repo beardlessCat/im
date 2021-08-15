@@ -53,9 +53,8 @@ public class CommandManager {
                 session.setUser(user);
                 loginMsgSender.setUser(user);
                 loginMsgSender.setSession(session);
-                Msg msg = new Msg();
-                msg.setUser(user);
-                msg.setMsgType(Msg.MsgType.LOGIN_REQUEST);
+                Msg msg = new Msg.MsgBuilder(Msg.MsgType.LOGIN_REQUEST, user)
+                        .build();
                 loginMsgSender.sendMsg(msg);
             }else if("2".equals(key)) {
                 boolean login = isLogin();
@@ -65,12 +64,12 @@ public class CommandManager {
                 }
                 logger.error("开始聊天，请输入聊天内容");
                 while (true) {
-                    String msg = scanner.next();
-                    Msg chatMsg = new Msg();
-                    chatMsg.setMsgType(Msg.MsgType.CHAT);
-                    chatMsg.setToUserId("1");
+                    User user = session.getUser();
+                    Msg msg = new Msg.MsgBuilder(Msg.MsgType.CHAT, user)
+                            .setToUserId("1")
+                            .build();
                     chatMsgSender.setSession(session);
-                    chatMsgSender.sendMsg(chatMsg);
+                    chatMsgSender.sendMsg(msg);
                 }
             }else if("3".equals(key)){
                 if (!isLogin()) {
@@ -82,12 +81,10 @@ public class CommandManager {
                 user.setToken("123456");
                 user.setDevId("1111");
                 user.setPlatform(1);
-                Msg chatMsg = new Msg();
-                chatMsg.setMsgType(Msg.MsgType.LOGOUT_REQUEST);
-                chatMsg.setToUserId("1");
-                chatMsg.setUser(user);
+                Msg msg = new Msg.MsgBuilder(Msg.MsgType.LOGOUT_REQUEST, user)
+                        .build();
                 chatMsgSender.setSession(session);
-                chatMsgSender.sendMsg(chatMsg);
+                chatMsgSender.sendMsg(msg);
             }else {
                 logger.error("无法识别指令[{}]，请重新输入!",key);
             }

@@ -37,9 +37,10 @@ public class LogoutRequestHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void sengLogoutResponse(ChannelHandlerContext context,Msg msgObject) {
-        msgObject.setMsgType(Msg.MsgType.LOGOUT_RESPONSE);
-        msgObject.setSuccess(true);
+        Msg msg = new Msg.MsgBuilder(Msg.MsgType.LOGOUT_RESPONSE, msgObject.getUser())
+                .setSuccess(true)
+                .build();
         Channel channel = context.channel();
-        channel.writeAndFlush(new Gson().toJson(msgObject)+"\r\n");
+        channel.writeAndFlush(new Gson().toJson(msg)+"\r\n");
     }
 }
