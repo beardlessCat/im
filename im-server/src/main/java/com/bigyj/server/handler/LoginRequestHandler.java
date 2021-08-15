@@ -28,7 +28,9 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
         serverSession.bind();
         this.sengLoginResponse(ctx,msgObject);
         //增加聊天的handler
-        ctx.pipeline().addAfter("login", "chat",  new ChatRedirectHandler());
+        //增加退出的handler
+        ctx.pipeline().addAfter("login","logout",new LogoutRequestHandler());
+        ctx.pipeline().addAfter("logout", "chat",  new ChatRedirectHandler());
         //移除登录handler
         ctx.pipeline().remove("login");
     }

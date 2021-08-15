@@ -63,6 +63,11 @@ public class ClientSession {
         this.sessionId = sessionId;
     }
 
+    /**
+     * 登录成功
+     * @param ctx
+     * @param msg
+     */
     public static void loginSuccess(
             ChannelHandlerContext ctx, Msg msg) {
         Channel channel = ctx.channel();
@@ -70,5 +75,17 @@ public class ClientSession {
         //session.setSessionId(msg.getSessionId());
         session.setLogin(true);
         logger.info("登录成功");
+    }
+
+    /**
+     * 登录失败
+     * @param ctx
+     * @param msg
+     */
+    public static void logOutSuccess(ChannelHandlerContext ctx, Msg msg) {
+        Channel channel = ctx.channel();
+        ClientSession session = channel.attr(ClientSession.SESSION_KEY).get();
+        session.setLogin(false);
+        logger.info("退出成功！");
     }
 }

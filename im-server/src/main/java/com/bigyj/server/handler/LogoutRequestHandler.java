@@ -22,8 +22,8 @@ public class LogoutRequestHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         logger.error("收到登出消息"+ msg);
-
-        ServerSessionHolder.removeServerSession(msgObject.getUser().getUid());
+        String uid = msgObject.getUser().getUid();
+        ServerSessionHolder.removeServerSession(uid);
         //保存channel信息
         ServerSession serverSession = new ServerSession(ctx.channel());
         serverSession.setLogin(false);

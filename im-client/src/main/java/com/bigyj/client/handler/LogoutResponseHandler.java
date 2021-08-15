@@ -8,28 +8,28 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class LoginResponseHandler extends ChannelInboundHandlerAdapter {
+public class LogoutResponseHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		Msg msgObject = JSONObject.parseObject(msg.toString(), Msg.class);
 		//判断消息实例
-		if (null == msg || (msgObject.getMsgType()!= Msg.MsgType.LOGIN_RESPONSE)) {
+		if (null == msg || (msgObject.getMsgType()!= Msg.MsgType.LOGOUT_RESPONSE)) {
 			super.channelRead(ctx, msg);
 			return;
 		}
-		logger.error("收到登录响应消息"+ msg);
+		logger.error("收到退出响应消息"+ msg);
 		//判断登录成功还是登录失败
 		if(msgObject.isSuccess()){
 			//调整客户端登录状态
-			ClientSession.loginSuccess(ctx,msgObject);
+			ClientSession.logOutSuccess(ctx,msgObject);
 			//增加退出的logourResponseHandler
-			ctx.pipeline().addAfter("login","logout",new LogoutResponseHandler());
-			//增加聊天的handler
-			ctx.pipeline().addAfter("logout", "chat",  new ImClientHandler());
+			ctx.pipeline().addBefore("chat","login",new LoginResponseHandler());
 			//移除登录handler
+			ctx.pipeline().remove("chat");
 			ctx.pipeline().remove(this);
+			logger.error("用户登录退出！");
 		}else {
-			logger.error("用户登录失败");
+			logger.error("用户退出失败");
 		}
 	}
 }

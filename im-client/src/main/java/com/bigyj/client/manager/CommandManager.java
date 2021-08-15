@@ -6,7 +6,6 @@ import com.bigyj.client.sender.ChatMsgSender;
 import com.bigyj.client.sender.LoginMsgSender;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.User;
-import com.google.gson.Gson;
 import io.netty.channel.Channel;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -74,14 +73,19 @@ public class CommandManager {
                     chatMsgSender.sendMsg(chatMsg);
                 }
             }else if("3".equals(key)){
-                logger.error("您已退出！");
                 if (!isLogin()) {
                     logger.info("还没有登录，请先登录");
-                    return;
+                    continue;
                 }
+                User user = new User();
+                user.setUid("1");
+                user.setToken("123456");
+                user.setDevId("1111");
+                user.setPlatform(1);
                 Msg chatMsg = new Msg();
-                chatMsg.setMsgType(Msg.MsgType.CHAT);
+                chatMsg.setMsgType(Msg.MsgType.LOGOUT_REQUEST);
                 chatMsg.setToUserId("1");
+                chatMsg.setUser(user);
                 chatMsgSender.setSession(session);
                 chatMsgSender.sendMsg(chatMsg);
             }else {
@@ -94,7 +98,6 @@ public class CommandManager {
             logger.info("session is null");
             return false;
         }
-
         return session.isLogin();
     }
 }
