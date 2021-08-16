@@ -1,6 +1,6 @@
 package com.bigyj.client.initializer;
 
-import com.bigyj.client.handler.HeartBeatClientHandler;
+import com.bigyj.client.handler.LoginResponseHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -17,6 +17,7 @@ public class ImClientInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new DelimiterBasedFrameDecoder(4096, Delimiters.lineDelimiter()));
         pipeline.addLast("decoder",new StringDecoder(CharsetUtil.UTF_8));
         pipeline.addLast("encoder",new StringEncoder(CharsetUtil.UTF_8));
-        pipeline.addAfter("encoder", "heartbeat", new HeartBeatClientHandler());
+        pipeline.addLast("login",new LoginResponseHandler());
+
     }
 }

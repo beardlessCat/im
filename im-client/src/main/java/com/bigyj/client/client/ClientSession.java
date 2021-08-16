@@ -1,6 +1,7 @@
 package com.bigyj.client.client;
 
 import com.bigyj.entity.Msg;
+import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.User;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -69,7 +70,7 @@ public class ClientSession {
      * @param msg
      */
     public static void loginSuccess(
-            ChannelHandlerContext ctx, Msg msg) {
+            ChannelHandlerContext ctx, MsgDto msg) {
         Channel channel = ctx.channel();
         ClientSession session = channel.attr(ClientSession.SESSION_KEY).get();
         //session.setSessionId(msg.getSessionId());
@@ -82,7 +83,7 @@ public class ClientSession {
      * @param ctx
      * @param msg
      */
-    public static void logOutSuccess(ChannelHandlerContext ctx, Msg msg) {
+    public static void logOutSuccess(ChannelHandlerContext ctx, MsgDto msg) {
         Channel channel = ctx.channel();
         ClientSession session = channel.attr(ClientSession.SESSION_KEY).get();
         session.setLogin(false);

@@ -3,6 +3,7 @@ package com.bigyj.client.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.client.client.ClientSession;
 import com.bigyj.entity.Msg;
+import com.bigyj.entity.MsgDto;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LogoutResponseHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		Msg msgObject = JSONObject.parseObject(msg.toString(), Msg.class);
+		MsgDto msgObject = JSONObject.parseObject(msg.toString(), MsgDto.class);
 		//判断消息实例
 		if (null == msg || (msgObject.getMsgType()!= Msg.MsgType.LOGOUT_RESPONSE)) {
 			super.channelRead(ctx, msg);
@@ -26,6 +27,8 @@ public class LogoutResponseHandler extends ChannelInboundHandlerAdapter {
 			ctx.pipeline().addBefore("chat","login",new LoginResponseHandler());
 			//移除登录handler
 			ctx.pipeline().remove("chat");
+			//移除心跳handler
+			ctx.pipeline().remove("heartbeat");
 			ctx.pipeline().remove(this);
 			logger.error("用户登录退出！");
 		}else {

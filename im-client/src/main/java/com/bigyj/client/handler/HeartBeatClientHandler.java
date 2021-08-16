@@ -3,6 +3,7 @@ package com.bigyj.client.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.client.client.ClientSession;
 import com.bigyj.entity.Msg;
+import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.User;
 import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,7 +18,7 @@ public class HeartBeatClientHandler extends ChannelInboundHandlerAdapter {
 
     //在Handler被加入到Pipeline时，开始发送心跳
     @Override
-    public void channelActive(ChannelHandlerContext ctx)
+    public void handlerAdded(ChannelHandlerContext ctx)
             throws Exception {
         //ClientSession session = ClientSession.getSession(ctx);
         //User user = session.getUser();
@@ -26,9 +27,8 @@ public class HeartBeatClientHandler extends ChannelInboundHandlerAdapter {
         user.setToken("123456");
         user.setDevId("1111");
         user.setPlatform(1);
-        Msg msg = new Msg();
-        msg.setMsgType(Msg.MsgType.HEART_BEAT);
-        msg.setUser(user);
+        Msg msg = Msg.builder(Msg.MsgType.HEART_BEAT, user)
+                .build();
         //发送心跳
         heartBeat(ctx, new Gson().toJson(msg));
     }
@@ -52,7 +52,7 @@ public class HeartBeatClientHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        Msg msgObject = JSONObject.parseObject(msg.toString(), Msg.class);
+        MsgDto msgObject = JSONObject.parseObject(msg.toString(), MsgDto.class);
 
         //判断消息实例
         if (null == msg || msgObject.getMsgType()!= Msg.MsgType.HEART_BEAT) {

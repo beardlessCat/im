@@ -53,7 +53,7 @@ public class CommandManager {
                 session.setUser(user);
                 loginMsgSender.setUser(user);
                 loginMsgSender.setSession(session);
-                Msg msg = new Msg.MsgBuilder(Msg.MsgType.LOGIN_REQUEST, user)
+                Msg msg = Msg.builder(Msg.MsgType.LOGIN_REQUEST, user)
                         .build();
                 loginMsgSender.sendMsg(msg);
             }else if("2".equals(key)) {
@@ -64,9 +64,11 @@ public class CommandManager {
                 }
                 logger.error("开始聊天，请输入聊天内容");
                 while (true) {
+                    String content = scanner.next();
                     User user = session.getUser();
-                    Msg msg = new Msg.MsgBuilder(Msg.MsgType.CHAT, user)
+                    Msg msg = Msg.builder(Msg.MsgType.CHAT, user)
                             .setToUserId("1")
+                            .setContent(content)
                             .build();
                     chatMsgSender.setSession(session);
                     chatMsgSender.sendMsg(msg);
@@ -81,7 +83,7 @@ public class CommandManager {
                 user.setToken("123456");
                 user.setDevId("1111");
                 user.setPlatform(1);
-                Msg msg = new Msg.MsgBuilder(Msg.MsgType.LOGOUT_REQUEST, user)
+                Msg msg = Msg.builder(Msg.MsgType.LOGOUT_REQUEST, user)
                         .build();
                 chatMsgSender.setSession(session);
                 chatMsgSender.sendMsg(msg);

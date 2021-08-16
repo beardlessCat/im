@@ -2,6 +2,7 @@ package com.bigyj.server.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
+import com.bigyj.entity.MsgDto;
 import com.bigyj.server.server.ServerSession;
 import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,7 +22,7 @@ public class HeartBeatServerHandler extends IdleStateHandler {
 
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
-        Msg msgObject = JSONObject.parseObject(msg.toString(), Msg.class);
+        MsgDto msgObject = JSONObject.parseObject(msg.toString(), MsgDto.class);
         //判断消息实例
         if (null == msgObject || msgObject.getMsgType()!=Msg.MsgType.HEART_BEAT) {
             super.channelRead(ctx, msg);

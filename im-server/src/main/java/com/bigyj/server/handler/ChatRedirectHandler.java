@@ -2,6 +2,7 @@ package com.bigyj.server.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
+import com.bigyj.entity.MsgDto;
 import com.bigyj.server.holder.ServerSessionHolder;
 import com.bigyj.server.server.ServerSession;
 import com.google.gson.Gson;
@@ -12,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		Msg msgObject = JSONObject.parseObject(msg.toString(), Msg.class);
+		MsgDto msgObject = JSONObject.parseObject(msg.toString(), MsgDto.class);
 		//判断消息实例
 		if (null == msg || (msgObject.getMsgType()!= Msg.MsgType.CHAT)) {
 			super.channelRead(ctx, msg);
@@ -28,7 +29,7 @@ public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 		this.action( msgObject);
 	}
 
-	private void action(Msg msgObject) {
+	private void action(MsgDto msgObject) {
 		String toUserId = msgObject.getToUserId();
 		ServerSession serverSession = ServerSessionHolder.getServerSession(toUserId);
 		if(serverSession== null){

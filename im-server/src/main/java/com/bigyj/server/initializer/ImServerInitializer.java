@@ -18,5 +18,6 @@ public class ImServerInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new StringDecoder(CharsetUtil.UTF_8));
         pipeline.addLast("encoder",new StringEncoder(CharsetUtil.UTF_8));
         pipeline.addLast("login",new LoginRequestHandler());
+
     }
 }

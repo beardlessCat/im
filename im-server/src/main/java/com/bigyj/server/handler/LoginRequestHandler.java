@@ -2,6 +2,7 @@ package com.bigyj.server.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
+import com.bigyj.entity.MsgDto;
 import com.bigyj.server.server.ServerSession;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
@@ -14,7 +15,9 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
-        Msg msgObject = JSONObject.parseObject(msg.toString(), Msg.class);
+        MsgDto msgObject = JSONObject.parseObject(msg.toString(), MsgDto.class);
+
+
         //判断消息实例
         if (null == msg || (msgObject.getMsgType()!= Msg.MsgType.LOGIN_REQUEST)) {
             super.channelRead(ctx, msg);
@@ -37,7 +40,7 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
         ctx.pipeline().remove("login");
     }
 
-    private void sengLoginResponse(ChannelHandlerContext context,Msg msgObject) {
+    private void sengLoginResponse(ChannelHandlerContext context,MsgDto msgObject) {
         Msg msg = new Msg.MsgBuilder(Msg.MsgType.LOGIN_RESPONSE, msgObject.getUser())
                 .setSuccess(true)
                 .build();

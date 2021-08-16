@@ -24,6 +24,7 @@ public class Msg {
      * 消息内容
      */
     private final String content ;
+
     public Msg(MsgBuilder msgBuilder){
         this.msgType = msgBuilder.msgType;
         this.user = msgBuilder.user;
@@ -31,6 +32,11 @@ public class Msg {
         this.toUserId = msgBuilder.toUserId;
         this.content = msgBuilder.content;
     }
+
+    public static MsgBuilder builder(MsgType msgType, User user) {
+        return new MsgBuilder(msgType,user);
+    }
+
     public static class MsgBuilder {
         private MsgType msgType ;
         private User user;
@@ -57,6 +63,7 @@ public class Msg {
             return new Msg(this);
         }
     }
+
     public enum MsgType
     {
         LOGIN_REQUEST,//登陆请求消息
