@@ -10,8 +10,8 @@ public class User {
     String uid = String.valueOf(NO.getAndIncrement());
     String devId= UUID.randomUUID().toString();
     String token= UUID.randomUUID().toString();
-    String nickName = "nickName";
-    private int platform;
+    String nickName ;
+    private String platform = "WEB";
     private String sessionId;
 
     @Override

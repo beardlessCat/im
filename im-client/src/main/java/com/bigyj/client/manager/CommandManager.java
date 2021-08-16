@@ -44,54 +44,85 @@ public class CommandManager {
                     logger.error("您已登录！");
                     continue;
                 }
-                logger.error("开始登录，请输入用户名及密码");
-                User user = new User();
-                user.setUid("1");
-                user.setToken("123456");
-                user.setDevId("1111");
-                user.setPlatform(1);
-                session.setUser(user);
-                loginMsgSender.setUser(user);
-                loginMsgSender.setSession(session);
-                Msg msg = Msg.builder(Msg.MsgType.LOGIN_REQUEST, user)
-                        .build();
-                loginMsgSender.sendMsg(msg);
+                this.startLogin(scanner);
             }else if("2".equals(key)) {
                 boolean login = isLogin();
                 if(!login){
                     logger.error("请先登录");
                     continue;
                 }
-                logger.error("开始聊天，请输入聊天内容");
-                while (true) {
-                    String content = scanner.next();
-                    User user = session.getUser();
-                    Msg msg = Msg.builder(Msg.MsgType.CHAT, user)
-                            .setToUserId("1")
-                            .setContent(content)
-                            .build();
-                    chatMsgSender.setSession(session);
-                    chatMsgSender.sendMsg(msg);
-                }
+                this.startChat(scanner);
             }else if("3".equals(key)){
                 if (!isLogin()) {
                     logger.info("还没有登录，请先登录");
                     continue;
                 }
-                User user = new User();
-                user.setUid("1");
-                user.setToken("123456");
-                user.setDevId("1111");
-                user.setPlatform(1);
-                Msg msg = Msg.builder(Msg.MsgType.LOGOUT_REQUEST, user)
-                        .build();
-                chatMsgSender.setSession(session);
-                chatMsgSender.sendMsg(msg);
+                this.startLogout();
             }else {
                 logger.error("无法识别指令[{}]，请重新输入!",key);
             }
         }
     }
+
+    /**
+     * 执行退出逻辑
+     */
+    private void startLogout() {
+        User user = session.getUser();
+        Msg msg = Msg.builder(Msg.MsgType.LOGOUT_REQUEST, user)
+                .build();
+        chatMsgSender.setSession(session);
+        chatMsgSender.sendMsg(msg);
+    }
+
+    /**
+     * 执行聊天逻辑
+     * @param scanner
+     */
+    private void startChat(Scanner scanner) {
+        logger.error("开始聊天，请输入聊天内容(content@userId)");
+        while (true) {
+            String content = scanner.next();
+            String[] split = content.split("@");
+            String contentValue = split[0];
+            String toUserId = split[1];
+            User user = session.getUser();
+            Msg msg = Msg.builder(Msg.MsgType.CHAT, user)
+                    .setToUserId(toUserId)
+                    .setContent(contentValue)
+                    .build();
+            chatMsgSender.setSession(session);
+            chatMsgSender.sendMsg(msg);
+        }
+    }
+
+    /**
+     * 执行登录逻辑
+     * @param scanner
+     */
+    private void startLogin(Scanner scanner) {
+        while (true) {
+            logger.error("开始登录，请输入用户名及token（userName@token）");
+            String content = scanner.next();
+            String[] split = content.split("@");
+            String userName = split[0];
+            String token = split[1];
+            User user = new User();
+            user.setNickName(userName);
+            user.setToken(token);
+            session.setUser(user);
+            loginMsgSender.setUser(user);
+            loginMsgSender.setSession(session);
+            Msg msg = Msg.builder(Msg.MsgType.LOGIN_REQUEST, user)
+                    .build();
+            loginMsgSender.sendMsg(msg);
+        }
+    }
+
+    /**
+     * 判断是否登录
+     * @return
+     */
     public boolean isLogin() {
         if (null == session) {
             logger.info("session is null");
