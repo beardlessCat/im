@@ -14,20 +14,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class HeartBeatClientHandler extends ChannelInboundHandlerAdapter {
     //心跳的时间间隔，单位为s
-    private static final int HEARTBEAT_INTERVAL = 5;
+    private static final int HEARTBEAT_INTERVAL = 60;
 
     //在Handler被加入到Pipeline时，开始发送心跳
     @Override
     public void handlerAdded(ChannelHandlerContext ctx)
             throws Exception {
-        //ClientSession session = ClientSession.getSession(ctx);
-        //User user = session.getUser();
-        User user = new User();
-        user.setUid("1");
-        user.setToken("123456");
-        user.setDevId("1111");
-        user.setPlatform(1);
-        Msg msg = Msg.builder(Msg.MsgType.HEART_BEAT, user)
+        Msg msg = Msg.builder().setMsgType(Msg.MsgType.HEART_BEAT)
                 .build();
         //发送心跳
         heartBeat(ctx, new Gson().toJson(msg));

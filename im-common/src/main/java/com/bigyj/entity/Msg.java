@@ -36,7 +36,9 @@ public class Msg {
     public static MsgBuilder builder(MsgType msgType, User user) {
         return new MsgBuilder(msgType,user);
     }
-
+    public static MsgBuilder builder() {
+        return new MsgBuilder();
+    }
     public static class MsgBuilder {
         private MsgType msgType ;
         private User user;
@@ -46,6 +48,16 @@ public class Msg {
         public MsgBuilder(MsgType msgType, User user){
             this.msgType = msgType;
             this.user = user ;
+        }
+        public MsgBuilder(){
+        }
+        public MsgBuilder setMsgType(MsgType msgType){
+            this.msgType = msgType ;
+            return this;
+        }
+        public MsgBuilder setUser(User user){
+            this.user = user ;
+            return this;
         }
         public MsgBuilder setSuccess(boolean success){
             this.success = success ;
