@@ -1,9 +1,10 @@
 package com.bigyj.client.client;
 
-import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.User;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ public class ClientSession {
     private Channel channel;
     private User user;
     private boolean isLogin = false;
+
+    private boolean isConnected = false;
 
     public boolean isLogin() {
         return isLogin;
@@ -88,5 +91,19 @@ public class ClientSession {
         ClientSession session = channel.attr(ClientSession.SESSION_KEY).get();
         session.setLogin(false);
         logger.info("退出成功！");
+    }
+    //关闭通道
+    public void close() {
+        isConnected = false;
+
+        ChannelFuture future = channel.close();
+        future.addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                if (future.isSuccess()) {
+                    logger.error("连接顺利断开");
+                }
+            }
+        });
     }
 }

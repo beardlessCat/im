@@ -1,16 +1,15 @@
 package com.bigyj.client.handler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.bigyj.client.client.ClientSession;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
-import com.bigyj.entity.User;
 import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
+
 @Slf4j
 public class HeartBeatClientHandler extends ChannelInboundHandlerAdapter {
     //心跳的时间间隔，单位为s

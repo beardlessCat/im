@@ -24,7 +24,7 @@ public class CommandManager {
     private ChatMsgSender chatMsgSender ;
     @Autowired
     private LoginMsgSender loginMsgSender ;
-
+    private boolean connectFlag;
     private ClientSession session;
 
     public void startClient() {
