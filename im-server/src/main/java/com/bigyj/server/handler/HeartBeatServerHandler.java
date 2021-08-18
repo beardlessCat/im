@@ -24,14 +24,17 @@ public class HeartBeatServerHandler extends IdleStateHandler {
             throws Exception {
         MsgDto msgObject = JSONObject.parseObject(msg.toString(), MsgDto.class);
         //判断消息实例
-        if (null == msgObject || msgObject.getMsgType()!=Msg.MsgType.HEART_BEAT) {
+        if (null == msgObject || msgObject.getMsgType()!=Msg.MsgType.HEART_PING) {
             super.channelRead(ctx, msg);
             return;
         }
-
+        Msg pongMsg = Msg.builder()
+            .setMsgType(Msg.MsgType.HEART_PONG)
+            .setContent("pong...")
+            .build();
         if (ctx.channel().isActive()) {
             //将心跳包，直接回复给客户端
-            ctx.writeAndFlush(new Gson().toJson(msgObject)+"\n");
+            ctx.writeAndFlush(new Gson().toJson(pongMsg)+"\n");
         }
         super.channelRead(ctx, msg);
     }
