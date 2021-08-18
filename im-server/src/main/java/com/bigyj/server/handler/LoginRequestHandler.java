@@ -54,7 +54,7 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void sengLoginResponse(ChannelHandlerContext context,MsgDto msgObject,boolean validateflag) {
-        Msg msg = new Msg.MsgBuilder(Msg.MsgType.LOGIN_RESPONSE, msgObject.getUser())
+        Msg msg = Msg.builder(Msg.MsgType.LOGIN_RESPONSE, msgObject.getUser())
                 .setSuccess(validateflag)
                 .build();
         Channel channel = context.channel();

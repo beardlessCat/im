@@ -27,10 +27,8 @@ public class LogoutResponseHandler extends ChannelInboundHandlerAdapter {
 			ctx.pipeline().addBefore("chat","login",new LoginResponseHandler());
 			//移除登录handler
 			ctx.pipeline().remove("chat");
-			//移除心跳handler
-			ctx.pipeline().remove("heartbeat");
 			ctx.pipeline().remove(this);
-			logger.error("用户登录退出！");
+			logger.error("用户退出成功！");
 		}else {
 			logger.error("用户退出失败");
 		}

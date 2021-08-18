@@ -66,6 +66,7 @@ public class ServerSession {
     public boolean isValid() {
         return getUser() != null ? true : false;
     }
+
     public synchronized void close() {
         channel.close();
     }

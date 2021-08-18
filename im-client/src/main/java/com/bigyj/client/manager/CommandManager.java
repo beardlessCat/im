@@ -4,6 +4,7 @@ import com.bigyj.client.client.ClientSession;
 import com.bigyj.client.client.ImClient;
 import com.bigyj.client.sender.ChatMsgSender;
 import com.bigyj.client.sender.LoginMsgSender;
+import com.bigyj.client.sender.LogoutMsgSender;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.User;
 import io.netty.channel.Channel;
@@ -24,6 +25,8 @@ public class CommandManager {
     private ChatMsgSender chatMsgSender ;
     @Autowired
     private LoginMsgSender loginMsgSender ;
+    @Autowired
+    private LogoutMsgSender logoutMsgSender ;
     private boolean connectFlag;
     private ClientSession session;
 
@@ -71,8 +74,8 @@ public class CommandManager {
         User user = session.getUser();
         Msg msg = Msg.builder(Msg.MsgType.LOGOUT_REQUEST, user)
                 .build();
-        chatMsgSender.setSession(session);
-        chatMsgSender.sendMsg(msg);
+        logoutMsgSender.setSession(session);
+        logoutMsgSender.sendMsg(msg);
     }
 
     /**
@@ -83,6 +86,14 @@ public class CommandManager {
         logger.error("开始聊天，请输入聊天内容(content@userId)");
         while (true) {
             String content = scanner.next();
+            if("EXIT".equals(content)){
+                this.startLogout();
+                continue;
+            }
+            if(!content.contains("@")){
+                logger.error("聊天内容格式为content@userId！");
+                continue;
+            }
             String[] split = content.split("@");
             String contentValue = split[0];
             String toUserId = split[1];
@@ -104,6 +115,10 @@ public class CommandManager {
         while (true) {
             logger.error("开始登录，请输入用户名及token（userName@token）");
             String content = scanner.next();
+            if(!content.contains("@")){
+                logger.error("登录内容格式为userName@token！");
+                continue;
+            }
             String[] split = content.split("@");
             String userName = split[0];
             String token = split[1];
@@ -116,6 +131,7 @@ public class CommandManager {
             Msg msg = Msg.builder(Msg.MsgType.LOGIN_REQUEST, user)
                     .build();
             loginMsgSender.sendMsg(msg);
+            startChat(scanner);
         }
     }
 

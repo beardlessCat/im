@@ -90,7 +90,6 @@ public class ClientSession {
         Channel channel = ctx.channel();
         ClientSession session = channel.attr(ClientSession.SESSION_KEY).get();
         session.setLogin(false);
-        logger.info("退出成功！");
     }
     //关闭通道
     public void close() {

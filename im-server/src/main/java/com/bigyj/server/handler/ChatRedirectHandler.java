@@ -3,6 +3,7 @@ package com.bigyj.server.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
+import com.bigyj.entity.User;
 import com.bigyj.server.holder.ServerSessionHolder;
 import com.bigyj.server.server.ServerSession;
 import com.google.gson.Gson;
@@ -26,16 +27,27 @@ public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 			logger.error("用户尚未登录，不能发送消息");
 			return;
 		}
-		this.action( msgObject);
+		this.action(msgObject,ctx);
 	}
 
-	private void action(MsgDto msgObject) {
+	private void action(MsgDto msgObject,ChannelHandlerContext context) {
 		String toUserId = msgObject.getToUserId();
 		ServerSession serverSession = ServerSessionHolder.getServerSession(toUserId);
 		if(serverSession== null){
-			logger.error("[" + toUserId + "] 不在线，发送失败!");
+			Msg msg = Msg.builder(Msg.MsgType.CHAT, msgObject.getUser())
+					.setContent("[" + toUserId + "] 不在线，发送失败!")
+					.setSuccess(false)
+					.build();
+			context.channel().writeAndFlush(new Gson().toJson(msg)+"\n");
+			logger.error("[\" + {} + \"] 不在线，发送失败!",toUserId);
 		}else {
-			serverSession.getChannel().writeAndFlush(new Gson().toJson(msgObject)+"\n");
+			User user = serverSession.getUser();
+			Msg msg = Msg.builder(Msg.MsgType.CHAT, user)
+					.setContent(msgObject.getContent())
+					.setSuccess(true)
+					.setToUserId(toUserId)
+					.build();
+			serverSession.getChannel().writeAndFlush(new Gson().toJson(msg)+"\n");
 		}
 	}
 }

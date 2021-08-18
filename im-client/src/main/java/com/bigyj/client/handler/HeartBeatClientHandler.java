@@ -1,6 +1,7 @@
 package com.bigyj.client.handler;
 
 import com.alibaba.fastjson.JSONObject;
+import com.bigyj.client.client.ClientSession;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
 import com.google.gson.Gson;

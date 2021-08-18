@@ -7,6 +7,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
@@ -14,10 +16,13 @@ import java.net.InetSocketAddress;
 @Service("imServer")
 @Slf4j
 public class ImServer {
+    @Value("${server.port}")
+    private static final int PORT = 8081;
+
     private EventLoopGroup bossGroup ;
+
     private EventLoopGroup workerGroup ;
-    //@Value("${chat.server.port}")
-    private int port = 8081;
+
     public void startImServer() {
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
@@ -27,7 +32,7 @@ public class ImServer {
             //2 设置nio类型的channel
             .channel(NioServerSocketChannel.class)
             .childHandler(new ImServerInitializer())
-                    .localAddress(new InetSocketAddress(port));
+                    .localAddress(new InetSocketAddress(PORT));
             // 通过调用sync同步方法阻塞直到绑定成功
             ChannelFuture channelFuture = serverBootstrap.bind().sync();
             logger.info(
