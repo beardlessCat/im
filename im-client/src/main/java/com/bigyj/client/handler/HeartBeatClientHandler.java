@@ -32,7 +32,6 @@ public class HeartBeatClientHandler extends ChannelInboundHandlerAdapter {
                           String heartbeatMsg) {
         ctx.executor().schedule(() -> {
             if (ctx.channel().isActive()) {
-                logger.info(" 发送 HEART_BEAT  消息 to server");
                 ctx.writeAndFlush(heartbeatMsg+"\n");
                 //递归调用，发送下一次的心跳
                 heartBeat(ctx, heartbeatMsg);
@@ -55,7 +54,7 @@ public class HeartBeatClientHandler extends ChannelInboundHandlerAdapter {
         }
         //判断类型
         if (msgObject.getMsgType()== Msg.MsgType.HEART_PONG) {
-            logger.info(" 收到回写的 HEART_BEAT  消息 from server");
+            logger.info(msgObject.getContent());
             return;
         } else {
             super.channelRead(ctx, msg);
