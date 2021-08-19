@@ -123,6 +123,7 @@ public class CommandManager {
             String userName = split[0];
             String token = split[1];
             User user = new User();
+            user.setUid(userName);
             user.setNickName(userName);
             user.setToken(token);
             session.setUser(user);

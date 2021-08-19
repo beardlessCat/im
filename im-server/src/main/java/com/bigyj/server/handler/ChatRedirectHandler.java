@@ -41,7 +41,7 @@ public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 			context.channel().writeAndFlush(new Gson().toJson(msg)+"\n");
 			logger.error("[\" + {} + \"] 不在线，发送失败!",toUserId);
 		}else {
-			User user = serverSession.getUser();
+			User user = msgObject.getUser();
 			Msg msg = Msg.builder(Msg.MsgType.CHAT, user)
 					.setContent(msgObject.getContent())
 					.setSuccess(true)
