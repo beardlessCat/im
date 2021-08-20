@@ -1,9 +1,9 @@
 package com.bigyj.server.server;
 
 import com.bigyj.server.initializer.ImServerInitializer;
-import com.bigyj.server.registration.Node;
+import com.bigyj.entity.Node;
 import com.bigyj.server.registration.ZkService;
-import com.google.gson.Gson;
+import com.bigyj.utils.NodeUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
@@ -12,21 +12,18 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.data.Stat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
 
 @Service("imServer")
 @Slf4j
 public class ImServer {
-    @Value("${server.port}")
-    private static final int PORT = 8081;
+    @Value("${chat.server.port}")
+    private int PORT ;
     private static final String MANAGE_PATH ="/im/nodes";
     public static final String PATH_PREFIX = MANAGE_PATH + "/seq-";
     private ZkService zkService;
@@ -65,10 +62,10 @@ public class ImServer {
                         if (zkService.checkNodeExists(MANAGE_PATH)) {
                             zkService.createPersistentNode(MANAGE_PATH);
                         }
-                        Node node = new Node("127.0.0.1",8080);
+                        Node node = new Node("127.0.0.1",PORT);
                         String pathRegistered =  zkService.createNode(PATH_PREFIX,node);
                         //为node 设置id
-                        node.setId(getIdByPath(pathRegistered));
+                        node.setId(NodeUtil.getIdByPath(pathRegistered,PATH_PREFIX));
                         logger.info("本地节点, path={}, id={}", pathRegistered, node.getId());
                     } else {
                         logger.error("服务端启动成失败");
@@ -89,23 +86,4 @@ public class ImServer {
             workerGroup.shutdownGracefully();
         }
     }
-    public long getIdByPath(String path) {
-        String sid = null;
-        if (null == path) {
-            throw new RuntimeException("节点路径有误");
-        }
-        int index = path.lastIndexOf(PATH_PREFIX);
-        if (index >= 0) {
-            index += PATH_PREFIX.length();
-            sid = index <= path.length() ? path.substring(index) : null;
-        }
-
-        if (null == sid) {
-            throw new RuntimeException("节点ID获取失败");
-        }
-
-        return Long.parseLong(sid);
-
-    }
-
 }

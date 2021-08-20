@@ -1,4 +1,4 @@
-package com.bigyj.server.registration;
+package com.bigyj.entity;
 
 import java.io.Serializable;
 
@@ -11,10 +11,13 @@ public class Node implements Serializable {
 	private long id;
 
 	//Netty 服务 IP
-	private String host="127.0.0.1";
+	private String host;
 
 	//Netty 服务 端口
-	private Integer port=8081;
+	private Integer port;
+
+	//权重（客户端连接数量）
+	private Integer weight = 0;
 
 	public Node(String host, Integer port) {
 		this.host = host;

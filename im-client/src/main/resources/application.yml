@@ -1,6 +1,6 @@
 server:
-  port: 8090
-chat:
-  server:
-    ip: 127.0.0.1
-    port: 8081
+  port: 8070
+
+zk:
+  url: 127.0.0.1:2181
+  timeout: 3000

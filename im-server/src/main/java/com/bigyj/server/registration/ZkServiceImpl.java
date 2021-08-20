@@ -1,7 +1,12 @@
 package com.bigyj.server.registration;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+import com.bigyj.entity.Node;
+import com.bigyj.utils.NodeUtil;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -35,7 +40,7 @@ public class ZkServiceImpl implements ZkService {
 	}
 
 	@Override
-	public String createNode(String prefix,Node node) throws Exception {
+	public String createNode(String prefix, Node node) throws Exception {
 		byte[] payload = new Gson().toJson(node).getBytes(StandardCharsets.UTF_8);
 		String pathRegistered = curatorFramework.create()
 				.creatingParentsIfNeeded()
@@ -43,4 +48,5 @@ public class ZkServiceImpl implements ZkService {
 				.forPath(prefix, payload);
 		return pathRegistered;
 	}
+
 }

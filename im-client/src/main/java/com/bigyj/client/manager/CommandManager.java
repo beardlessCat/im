@@ -29,7 +29,6 @@ public class CommandManager {
     private LogoutMsgSender logoutMsgSender ;
     private boolean connectFlag;
     private ClientSession session;
-
     public void startClient() {
         Channel channel = imClient.doConnect();
         session = new ClientSession(channel);

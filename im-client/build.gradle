@@ -6,5 +6,6 @@ dependencies {
     implementation libraries.springBootStarterWeb
     implementation libraries.gson
     implementation libraries.fastjson
+    implementation libraries.curator
 
 }
