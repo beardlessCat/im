@@ -1,7 +1,7 @@
 package com.bigyj.server.server;
 
 import com.bigyj.server.initializer.ImServerInitializer;
-import com.bigyj.entity.Node;
+import com.bigyj.entity.ServerNode;
 import com.bigyj.server.registration.ZkService;
 import com.bigyj.utils.NodeUtil;
 import io.netty.bootstrap.ServerBootstrap;
@@ -62,11 +62,11 @@ public class ImServer {
                         if (zkService.checkNodeExists(MANAGE_PATH)) {
                             zkService.createPersistentNode(MANAGE_PATH);
                         }
-                        Node node = new Node("127.0.0.1",PORT);
-                        String pathRegistered =  zkService.createNode(PATH_PREFIX,node);
+                        ServerNode serverNode = new ServerNode("127.0.0.1",PORT);
+                        String pathRegistered =  zkService.createNode(PATH_PREFIX, serverNode);
                         //为node 设置id
-                        node.setId(NodeUtil.getIdByPath(pathRegistered,PATH_PREFIX));
-                        logger.info("本地节点, path={}, id={}", pathRegistered, node.getId());
+                        serverNode.setId(NodeUtil.getIdByPath(pathRegistered,PATH_PREFIX));
+                        logger.info("本地节点, path={}, id={}", pathRegistered, serverNode.getId());
                     } else {
                         logger.error("服务端启动成失败");
                     }

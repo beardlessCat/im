@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
-import com.bigyj.entity.Node;
+import com.bigyj.entity.ServerNode;
 import com.bigyj.utils.NodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -19,8 +19,8 @@ public class ZkServiceImpl implements ZkService {
 	CuratorFramework curatorFramework;
 
 	@Override
-	public List<Node> getWorkers(String path,String prefix) {
-		List<Node> workers = new ArrayList<Node>();
+	public List<ServerNode> getWorkers(String path,String prefix) {
+		List<ServerNode> workers = new ArrayList<ServerNode>();
 		List<String> children = null;
 		try
 		{
@@ -47,9 +47,9 @@ public class ZkServiceImpl implements ZkService {
 			{
 				continue;
 			}
-			Node node = JSONObject.parseObject(payload, Node.class);
-			node.setId(NodeUtil.getIdByPath(child,prefix));
-			workers.add(node);
+			ServerNode serverNode = JSONObject.parseObject(payload, ServerNode.class);
+			serverNode.setId(NodeUtil.getIdByPath(child,prefix));
+			workers.add(serverNode);
 		}
 		return workers;
 	}

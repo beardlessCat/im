@@ -1,5 +1,5 @@
 server:
-  port: 8070
+  port: 8040
 
 zk:
   url: 127.0.0.1:2181

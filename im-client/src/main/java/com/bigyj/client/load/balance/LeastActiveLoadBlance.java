@@ -2,7 +2,7 @@ package com.bigyj.client.load.balance;
 
 import java.util.List;
 
-import com.bigyj.entity.Node;
+import com.bigyj.entity.ServerNode;
 
 /**
  * 最少活跃数
@@ -10,7 +10,7 @@ import com.bigyj.entity.Node;
 public class LeastActiveLoadBlance extends AbstractLoadBalance{
 
 	@Override
-	protected Node doSelect(List<Node> nodes) {
+	protected ServerNode doSelect(List<ServerNode> serverNodes) {
 		return null;
 	}
 }

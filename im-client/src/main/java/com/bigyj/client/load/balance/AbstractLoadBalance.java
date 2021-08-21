@@ -2,19 +2,19 @@ package com.bigyj.client.load.balance;
 
 import java.util.List;
 
-import com.bigyj.entity.Node;
+import com.bigyj.entity.ServerNode;
 
 public abstract class AbstractLoadBalance implements LoadBalance{
 	@Override
-	public Node selectNode(List<Node> nodes) {
-		if(nodes.isEmpty()){
+	public ServerNode selectNode(List<ServerNode> serverNodes) {
+		if(serverNodes.isEmpty()){
 			return null;
 		}
-		if(nodes.size() == 1){
-			return nodes.get(0);
+		if(serverNodes.size() == 1){
+			return serverNodes.get(0);
 		}
-		return doSelect(nodes);
+		return doSelect(serverNodes);
 	}
 
-	protected abstract Node doSelect(List<Node> nodes);
+	protected abstract ServerNode doSelect(List<ServerNode> serverNodes);
 }

@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class Node implements Serializable {
+public class ServerNode implements Serializable {
 
 	//worker 的Id,zookeeper负责生成
 	private long id;
@@ -19,7 +19,7 @@ public class Node implements Serializable {
 	//权重（客户端连接数量）
 	private Integer weight = 0;
 
-	public Node(String host, Integer port) {
+	public ServerNode(String host, Integer port) {
 		this.host = host;
 		this.port = port;
 	}

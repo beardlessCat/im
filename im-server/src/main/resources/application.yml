@@ -1,8 +1,8 @@
 server:
-  port: 8090
+  port: 8070
 chat:
   server:
-    port: 18090
+    port: 18070
 zk:
   url: 127.0.0.1:2181
   timeout: 3000
