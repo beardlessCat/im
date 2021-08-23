@@ -3,8 +3,8 @@ package com.bigyj.server.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
-import com.bigyj.server.holder.ServerSessionHolder;
-import com.bigyj.server.server.ServerSession;
+import com.bigyj.server.holder.LocalSessionHolder;
+import com.bigyj.server.session.LocalSession;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,9 +24,9 @@ public class LogoutRequestHandler extends ChannelInboundHandlerAdapter {
         }
         logger.error("收到登出消息"+ msg);
         String uid = msgObject.getUser().getUid();
-        ServerSessionHolder.removeServerSession(uid);
+        LocalSessionHolder.removeServerSession(uid);
         //保存channel信息
-        ServerSession serverSession = new ServerSession(ctx.channel());
+        LocalSession serverSession = new LocalSession(ctx.channel());
         serverSession.setLogin(false);
         this.sengLogoutResponse(ctx,msgObject);
         //增加登录的handler

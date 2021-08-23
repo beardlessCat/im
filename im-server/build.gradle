@@ -16,7 +16,7 @@ dependencies {
     implementation libraries.gson
     implementation libraries.fastjson
     implementation libraries.curator
-
+    implementation libraries.springBootStarterDataRedis
 }
 
 

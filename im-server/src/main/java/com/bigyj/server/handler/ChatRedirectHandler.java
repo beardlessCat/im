@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.User;
-import com.bigyj.server.holder.ServerSessionHolder;
-import com.bigyj.server.server.ServerSession;
+import com.bigyj.server.holder.LocalSessionHolder;
+import com.bigyj.server.session.LocalSession;
 import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -21,7 +21,7 @@ public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 		//反向导航
-		ServerSession session = ctx.channel().attr(ServerSession.SESSION_KEY).get();
+		LocalSession session = ctx.channel().attr(LocalSession.SESSION_KEY).get();
 		//判断是否登录
 		if (null == session || !session.isLogin()) {
 			logger.error("用户尚未登录，不能发送消息");
@@ -32,7 +32,7 @@ public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 
 	private void action(MsgDto msgObject,ChannelHandlerContext context) {
 		String toUserId = msgObject.getToUserId();
-		ServerSession serverSession = ServerSessionHolder.getServerSession(toUserId);
+		LocalSession serverSession = LocalSessionHolder.getServerSession(toUserId);
 		if(serverSession== null){
 			Msg msg = Msg.builder(Msg.MsgType.CHAT, msgObject.getUser())
 					.setContent("[" + toUserId + "] 不在线，发送失败!")

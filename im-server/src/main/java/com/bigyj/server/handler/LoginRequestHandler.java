@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.User;
-import com.bigyj.server.server.ServerSession;
+import com.bigyj.server.session.LocalSession;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,7 +33,7 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
             this.sengLoginResponse(ctx,msgObject,validateflag);
         }
         //保存channel信息
-        ServerSession serverSession = new ServerSession(ctx.channel());
+        LocalSession serverSession = new LocalSession(ctx.channel());
         serverSession.setUser(user);
         logger.error(serverSession.getUser().getNickName()+"登录成功!");
         serverSession.bind();

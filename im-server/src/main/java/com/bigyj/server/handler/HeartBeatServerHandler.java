@@ -3,7 +3,7 @@ package com.bigyj.server.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
-import com.bigyj.server.server.ServerSession;
+import com.bigyj.server.session.LocalSession;
 import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -44,6 +44,6 @@ public class HeartBeatServerHandler extends IdleStateHandler {
     @Override
     protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) throws Exception {
         logger.info(READ_IDLE_GAP + "秒内未读到数据，关闭连接");
-        ServerSession.closeSession(ctx);
+        LocalSession.closeSession(ctx);
     }
 }
