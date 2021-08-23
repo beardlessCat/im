@@ -1,6 +1,6 @@
 package com.bigyj.server.session;
 
-public class RemoteSession implements Session{
+public class RemoteSession implements ServerSession {
 	@Override
 	public void writeAndFlush(Object pkg) {
 

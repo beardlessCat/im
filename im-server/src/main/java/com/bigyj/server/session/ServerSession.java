@@ -1,6 +1,6 @@
 package com.bigyj.server.session;
 
-public interface Session {
+public interface ServerSession {
 	/**
 	 * 发送消息
 	 * @param pkg 消息

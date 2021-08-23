@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Data
-public class LocalSession implements Session{
+public class LocalSession implements ServerSession {
 	public static final AttributeKey<String> KEY_USER_ID =
 			AttributeKey.valueOf("key_user_id");
 
