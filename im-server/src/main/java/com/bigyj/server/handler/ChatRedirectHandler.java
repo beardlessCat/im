@@ -43,10 +43,11 @@ public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 		ServerSession serverSession = serverSessionManager.getServerSession(toUserId);
 		if(serverSession == null){
 			this.sentNotOnlineMsg(msgObject,toUserId,context);
-		}
-		boolean result = serverSession.writeAndFlush(msgObject);
-		if(!result){
+		}else {
+			boolean result = serverSession.writeAndFlush(msgObject);
+			if(!result){
 
+			}
 		}
 	}
 
