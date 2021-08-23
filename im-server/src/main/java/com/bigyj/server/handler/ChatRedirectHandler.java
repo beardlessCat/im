@@ -3,16 +3,24 @@ package com.bigyj.server.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
-import com.bigyj.entity.User;
-import com.bigyj.server.holder.LocalSessionHolder;
 import com.bigyj.server.session.LocalSession;
+import com.bigyj.server.session.ServerSession;
+import com.bigyj.server.session.ServerSessionManager;
 import com.google.gson.Gson;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 @Slf4j
+@Component
+@ChannelHandler.Sharable
 public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
+	@Autowired
+	private ServerSessionManager serverSessionManager ;
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		MsgDto msgObject = JSONObject.parseObject(msg.toString(), MsgDto.class);
 		//判断消息实例
@@ -32,22 +40,28 @@ public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 
 	private void action(MsgDto msgObject,ChannelHandlerContext context) {
 		String toUserId = msgObject.getToUserId();
-		LocalSession serverSession = LocalSessionHolder.getServerSession(toUserId);
-		if(serverSession== null){
-			Msg msg = Msg.builder(Msg.MsgType.CHAT, msgObject.getUser())
-					.setContent("[" + toUserId + "] 不在线，发送失败!")
-					.setSuccess(false)
-					.build();
-			context.channel().writeAndFlush(new Gson().toJson(msg)+"\n");
-			logger.error("[\" + {} + \"] 不在线，发送失败!",toUserId);
-		}else {
-			User user = msgObject.getUser();
-			Msg msg = Msg.builder(Msg.MsgType.CHAT, user)
-					.setContent(msgObject.getContent())
-					.setSuccess(true)
-					.setToUserId(toUserId)
-					.build();
-			serverSession.getChannel().writeAndFlush(new Gson().toJson(msg)+"\n");
+		ServerSession serverSession = serverSessionManager.getServerSession(toUserId);
+		if(serverSession == null){
+			this.sentNotOnlineMsg(msgObject,toUserId,context);
 		}
+		boolean result = serverSession.writeAndFlush(msgObject);
+		if(!result){
+
+		}
+	}
+
+	/**
+	 * 告知客户端用户不在线
+	 * @param msgObject
+	 * @param toUserId
+	 * @param context
+	 */
+	private void sentNotOnlineMsg(MsgDto msgObject,String toUserId,ChannelHandlerContext context) {
+		Msg msg = Msg.builder(Msg.MsgType.CHAT, msgObject.getUser())
+				.setContent("[" + toUserId + "] 不在线，发送失败!")
+				.setSuccess(false)
+				.build();
+		context.channel().writeAndFlush(new Gson().toJson(msg)+"\n");
+		logger.error("[\" + {} + \"] 不在线，发送失败!",toUserId);
 	}
 }

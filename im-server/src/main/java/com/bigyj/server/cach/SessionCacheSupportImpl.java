@@ -19,7 +19,7 @@ public class SessionCacheSupportImpl implements SessionCacheSupport{
 	private static final long VALIDITY_TIME = 60 * 60 * 2;
 
 	@Override
-	public void save(final SessionCache sessionCache)
+	public void save(SessionCache sessionCache)
 	{
 		String key = REDIS_PREFIX + sessionCache.getSessionId();
 		String value = new Gson().toJson(sessionCache);
@@ -28,7 +28,7 @@ public class SessionCacheSupportImpl implements SessionCacheSupport{
 
 
 	@Override
-	public SessionCache get(final String sessionId)
+	public SessionCache get(String sessionId)
 	{
 		String key = REDIS_PREFIX + sessionId;
 		String value = (String) redisTemplate.opsForValue().get(key);

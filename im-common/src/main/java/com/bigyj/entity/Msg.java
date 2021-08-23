@@ -84,7 +84,7 @@ public class Msg {
         LOGOUT_REQUEST,// 退出请求消息
         LOGOUT_RESPONSE,// 退出响应消息
         HEART_PING,//心跳ping
-        HEART_PONG,//心跳ping
+        HEART_PONG,//心跳pong
 
     }
 }

@@ -2,8 +2,11 @@ package com.bigyj.server.session;
 
 import java.util.UUID;
 
+import com.bigyj.entity.Msg;
+import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.User;
 import com.bigyj.server.holder.LocalSessionHolder;
+import com.google.gson.Gson;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
@@ -33,8 +36,21 @@ public class LocalSession implements ServerSession {
 	}
 
 	@Override
-	public void writeAndFlush(Object pkg) {
-
+	public boolean writeAndFlush(MsgDto msgObject) {
+		String toUserId = msgObject.getToUserId();
+		LocalSession localSession = LocalSessionHolder.getServerSession(toUserId);
+		if(localSession== null){
+			return false;
+		}else {
+			User user = msgObject.getUser();
+			Msg msg = Msg.builder(Msg.MsgType.CHAT, user)
+					.setContent(msgObject.getContent())
+					.setSuccess(true)
+					.setToUserId(toUserId)
+					.build();
+			localSession.getChannel().writeAndFlush(new Gson().toJson(msg)+"\n");
+			return true;
+		}
 	}
 
 	@Override
@@ -49,7 +65,7 @@ public class LocalSession implements ServerSession {
 
 	@Override
 	public String getUserId() {
-		return null;
+		return user.getUid();
 	}
 
 	private static String buildNewSessionId() {

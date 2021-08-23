@@ -1,11 +1,13 @@
 package com.bigyj.server.session;
 
+import com.bigyj.entity.MsgDto;
+
 public interface ServerSession {
 	/**
 	 * 发送消息
 	 * @param pkg 消息
 	 */
-	void writeAndFlush(Object pkg);
+	boolean writeAndFlush(MsgDto pkg);
 
 	/**
 	 * 获取sessionId

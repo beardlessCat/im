@@ -5,14 +5,27 @@ import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.User;
 import com.bigyj.server.session.LocalSession;
+import com.bigyj.server.session.ServerSessionManager;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 @Slf4j
+@Component
+@ChannelHandler.Sharable
 public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
+    @Autowired
+    private ServerSessionManager serverSessionManager ;
+    @Autowired
+    private LogoutRequestHandler logoutRequestHandler;
+    @Autowired
+    private ChatRedirectHandler chatRedirectHandler ;
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
@@ -37,12 +50,15 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
         serverSession.setUser(user);
         logger.error(serverSession.getUser().getNickName()+"登录成功!");
         serverSession.bind();
+        //连接信息保存至redis数据库
+        serverSessionManager.addServerSession(serverSession);
         this.sengLoginResponse(ctx,msgObject,true);
-        //增加聊天的handler
-        //增加退出的handler
+        //增加心跳handler
         ctx.pipeline().addAfter("login", "heartBeat",new HeartBeatServerHandler());
-        ctx.pipeline().addAfter("login","logout",new LogoutRequestHandler());
-        ctx.pipeline().addAfter("logout", "chat",  new ChatRedirectHandler());
+        //增加退出的handler
+        ctx.pipeline().addAfter("login","logout",logoutRequestHandler);
+        //增加聊天的handler
+        ctx.pipeline().addAfter("logout", "chat",  chatRedirectHandler);
         //移除登录handler
         ctx.pipeline().remove("login");
     }

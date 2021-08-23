@@ -1,29 +1,56 @@
 package com.bigyj.server.session;
 
-public class ServerSessionManager {
-	/**
-	 *饿汉式创建ServerSessionManager单例
-	 */
-	private static final ServerSessionManager singleInstance = new ServerSessionManager();
-	//取得单例
-	public synchronized static ServerSessionManager instance() {
-		return singleInstance;
-	}
+import com.bigyj.entity.ServerNode;
+import com.bigyj.entity.SessionCache;
+import com.bigyj.server.cach.SessionCacheSupport;
+import com.bigyj.server.holder.LocalSessionHolder;
+import com.bigyj.server.server.ServerWorker;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ServerSessionManager {
+	@Autowired
+	private SessionCacheSupport sessionCacheSupport;
 	/**
 	 * 根据userid获取session
 	 * @param userId
 	 * @return
 	 */
 	public ServerSession getServerSession(String userId){
-
-		return null;
+		ServerSession serverSession = null;
+		SessionCache sessionCache = sessionCacheSupport.get(userId);
+		//redis中查询不到相关客户端
+		if(sessionCache ==null){
+			return null;
+		}
+		//判断消息接受者是不是连接当前服务
+		ServerNode cacheServerNode = sessionCache.getServerNode();
+		ServerNode serverNode = ServerWorker.instance().getServerNode();
+		if(serverNode.getAddress().equals(cacheServerNode.getAddress())){
+			//当前服务
+			serverSession = LocalSessionHolder.getServerSession(userId);
+		}else {
+			//远程服务
+			serverSession = new RemoteSession(sessionCache);
+		}
+		return serverSession;
 	}
 
-	public ServerSession addServerSession(){
+	/**
+	 * 保存servreSession
+	 * @param localSession
+	 */
+	public void addServerSession(LocalSession localSession){
 		//添加至本地session
-
+		LocalSessionHolder.addServerSession(localSession);
 		//存储至redis数据库中
-		return null;
+		String sessionId = localSession.getSessionId();
+		String userId = localSession.getUserId();
+		ServerNode serverNode = ServerWorker.instance().getServerNode();
+		SessionCache sessionCache = new SessionCache(sessionId,userId,serverNode) ;
+		sessionCacheSupport.save(sessionCache);
 	}
+
 }

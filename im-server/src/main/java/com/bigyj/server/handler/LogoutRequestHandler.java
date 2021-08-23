@@ -3,16 +3,25 @@ package com.bigyj.server.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
+import com.bigyj.server.cach.SessionCacheSupport;
 import com.bigyj.server.holder.LocalSessionHolder;
 import com.bigyj.server.session.LocalSession;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 @Slf4j
+@Component
+@ChannelHandler.Sharable
 public class LogoutRequestHandler extends ChannelInboundHandlerAdapter {
+    @Autowired
+    private SessionCacheSupport sessionCacheSupport;
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
@@ -35,6 +44,8 @@ public class LogoutRequestHandler extends ChannelInboundHandlerAdapter {
         ctx.pipeline().remove("chat");
         //移除
         ctx.pipeline().remove(this);
+        //移除redis缓存新
+        sessionCacheSupport.remove(uid);
     }
 
     private void sengLogoutResponse(ChannelHandlerContext context,MsgDto msgObject) {

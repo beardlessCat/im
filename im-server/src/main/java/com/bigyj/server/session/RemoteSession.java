@@ -1,9 +1,20 @@
 package com.bigyj.server.session;
 
-public class RemoteSession implements ServerSession {
-	@Override
-	public void writeAndFlush(Object pkg) {
+import com.bigyj.entity.MsgDto;
+import com.bigyj.entity.SessionCache;
+import lombok.Data;
 
+@Data
+public class RemoteSession implements ServerSession {
+	private SessionCache sessionCache;
+
+	public RemoteSession(SessionCache sessionCache) {
+		this.sessionCache = sessionCache;
+	}
+
+	@Override
+	public boolean writeAndFlush(MsgDto pkg) {
+		return true;
 	}
 
 	@Override
