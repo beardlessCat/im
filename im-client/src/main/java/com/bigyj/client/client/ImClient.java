@@ -25,10 +25,12 @@ public class ImClient {
 
     private ZkService zkService;
     private LoadBalance loadBalance;
+    private ImClientInitializer imClientInitializer ;
     @Autowired
-    ImClient(ZkService zkService,LoadBalance loadBalance){
+    ImClient(ZkService zkService,LoadBalance loadBalance,ImClientInitializer imClientInitializer){
         this.zkService = zkService;
         this.loadBalance  = loadBalance ;
+        this.imClientInitializer = imClientInitializer;
     }
 
     private Bootstrap bootstrap;
@@ -50,7 +52,7 @@ public class ImClient {
             eventLoopGroup = new NioEventLoopGroup();
             bootstrap.group(eventLoopGroup)
                     .channel(NioSocketChannel.class)
-                    .handler(new ImClientInitializer());
+                    .handler(imClientInitializer);
             channel = bootstrap.connect(serverNode.getHost(), serverNode.getPort()).sync().channel();
             return channel ;
         }catch (Exception e){

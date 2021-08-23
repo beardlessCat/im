@@ -1,16 +1,14 @@
 package com.bigyj.server.server;
 
+import java.util.UUID;
+
 import com.bigyj.entity.User;
 import com.bigyj.server.holder.ServerSessionHolder;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.UUID;
 
 @Data
 @Slf4j

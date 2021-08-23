@@ -25,6 +25,7 @@ public class ExceptionHandler extends ChannelInboundHandlerAdapter {
             logger.error(cause.getMessage());
             ctx.close();
             //开始重连
+            logger.error("客户端重新连接服务器......");
             commandManager.setConnectFlag(false);
             commandManager.startClient();
         }
