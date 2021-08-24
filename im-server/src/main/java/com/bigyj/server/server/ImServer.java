@@ -3,6 +3,7 @@ package com.bigyj.server.server;
 import com.bigyj.server.initializer.ImServerInitializer;
 import com.bigyj.entity.ServerNode;
 import com.bigyj.server.registration.ZkService;
+import com.bigyj.server.worker.ServerWorker;
 import com.bigyj.utils.NodeUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

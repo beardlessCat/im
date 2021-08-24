@@ -5,7 +5,7 @@ import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.User;
 import com.bigyj.server.session.LocalSession;
-import com.bigyj.server.session.ServerSessionManager;
+import com.bigyj.server.manager.ServerSessionManager;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;

@@ -1,10 +1,13 @@
-package com.bigyj.server.session;
+package com.bigyj.server.manager;
 
 import com.bigyj.entity.ServerNode;
 import com.bigyj.entity.SessionCache;
 import com.bigyj.server.cach.SessionCacheSupport;
 import com.bigyj.server.holder.LocalSessionHolder;
-import com.bigyj.server.server.ServerWorker;
+import com.bigyj.server.worker.ServerWorker;
+import com.bigyj.server.session.LocalSession;
+import com.bigyj.server.session.RemoteSession;
+import com.bigyj.server.session.ServerSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.bigyj.server.server;
+package com.bigyj.server.worker;
 
 import com.bigyj.entity.ServerNode;
 import lombok.Data;
