@@ -3,6 +3,7 @@ package com.bigyj.server.server;
 import com.bigyj.server.initializer.ImServerInitializer;
 import com.bigyj.entity.ServerNode;
 import com.bigyj.server.registration.ZkService;
+import com.bigyj.server.worker.ServerRouterWorker;
 import com.bigyj.server.worker.ServerWorker;
 import com.bigyj.utils.NodeUtil;
 import io.netty.bootstrap.ServerBootstrap;
@@ -29,10 +30,12 @@ public class ImServer {
     public static final String PATH_PREFIX = MANAGE_PATH + "/seq-";
     private ZkService zkService;
     private ImServerInitializer imServerInitializer;
+    private ServerRouterWorker serverRouterWorker;
     @Autowired
-    ImServer(ZkService zkService,ImServerInitializer imServerInitializer){
+    ImServer(ZkService zkService,ImServerInitializer imServerInitializer ,ServerRouterWorker serverRouterWorker){
         this.zkService = zkService;
         this.imServerInitializer = imServerInitializer ;
+        this.serverRouterWorker = serverRouterWorker;
     }
 
     private EventLoopGroup bossGroup ;
@@ -71,6 +74,8 @@ public class ImServer {
                         logger.info("本地节点, path={}, id={}", pathRegistered, serverNode.getId());
                         //fixme 管理serverNode
                         ServerWorker.instance().setServerNode(serverNode);
+
+                        serverRouterWorker.init();
                     } else {
                         logger.error("服务端启动成失败");
                     }
