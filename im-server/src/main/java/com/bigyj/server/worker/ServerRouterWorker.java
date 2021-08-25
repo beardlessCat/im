@@ -1,5 +1,6 @@
 package com.bigyj.server.worker;
 
+import com.bigyj.server.server.ServerPeerSender;
 import com.bigyj.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -35,6 +36,7 @@ public class ServerRouterWorker {
 				switch (event.getType()) {
 					case CHILD_ADDED:
 						logger.info("CHILD_ADDED : " + data.getPath());
+						processAdd(data);
 						break;
 					case CHILD_REMOVED:
 						logger.info("CHILD_REMOVED : " + data.getPath());
@@ -53,5 +55,9 @@ public class ServerRouterWorker {
 		logger.info("Register zk watcher successfully!");
 		childrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
 		this.inited = true ;
+	}
+	private void processAdd(ChildData data) {
+		ServerPeerSender serverPeerSender = new ServerPeerSender();
+		serverPeerSender.doConnectedServer(data);
 	}
 }
