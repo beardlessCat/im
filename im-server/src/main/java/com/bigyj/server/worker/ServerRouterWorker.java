@@ -2,7 +2,10 @@ package com.bigyj.server.worker;
 
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.ServerNode;
+import com.bigyj.server.holder.ServerPeerSenderHolder;
+import com.bigyj.server.registration.CuratorZKclient;
 import com.bigyj.server.server.ServerPeerSender;
+import com.bigyj.utils.NodeUtil;
 import com.bigyj.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -17,10 +20,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class ServerRouterWorker {
-	@Autowired
-	private CuratorFramework curatorFramework;
 
 	private static final String MANAGE_PATH ="/im/nodes";
+	public static final String PATH_PREFIX = MANAGE_PATH + "/seq-";
 
 	private boolean inited = false;
 
@@ -28,6 +30,7 @@ public class ServerRouterWorker {
 		if(inited){
 			return;
 		}
+		CuratorFramework curatorFramework = CuratorZKclient.getSingleton();
 		//订阅节点的增加和删除事件
 		PathChildrenCache childrenCache = new PathChildrenCache(curatorFramework, MANAGE_PATH, true);
 		PathChildrenCacheListener childrenCacheListener = new PathChildrenCacheListener() {
@@ -58,13 +61,31 @@ public class ServerRouterWorker {
 		childrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
 		this.inited = true ;
 	}
+
+	/**
+	 * zk节点新增
+	 * @param data
+	 */
 	private void processAdd(ChildData data) {
 		ServerPeerSender serverPeerSender = new ServerPeerSender();
+		long id = NodeUtil.getIdByPath(data.getPath(), PATH_PREFIX);
 		ServerNode serverNode = JSONObject.parseObject(data.getData(), ServerNode.class);
+		serverNode.setId(id);
 		if(ServerWorker.instance().getServerNode().getAddress().equals(serverNode.getAddress())){
 			logger.info("监听到自身节点加入，无需进行连接!");
 			return;
 		}
 		serverPeerSender.doConnectedServer(serverNode);
+		ServerPeerSenderHolder.addWorker(id,serverPeerSender);
+	}
+
+	/**
+	 * 路由到某个节点
+	 * @param id
+	 * @return
+	 */
+	public ServerPeerSender router(long id) {
+		ServerPeerSender worker = ServerPeerSenderHolder.getWorker(id);
+		return worker;
 	}
 }

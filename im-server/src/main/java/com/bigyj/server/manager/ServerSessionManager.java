@@ -31,6 +31,7 @@ public class ServerSessionManager {
 		//判断消息接受者是不是连接当前服务
 		ServerNode cacheServerNode = sessionCache.getServerNode();
 		ServerNode serverNode = ServerWorker.instance().getServerNode();
+
 		if(serverNode.getAddress().equals(cacheServerNode.getAddress())){
 			//当前服务
 			serverSession = LocalSessionHolder.getServerSession(userId);

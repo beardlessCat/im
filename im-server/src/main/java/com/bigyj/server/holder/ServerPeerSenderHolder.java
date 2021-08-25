@@ -2,24 +2,24 @@ package com.bigyj.server.holder;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.bigyj.server.worker.ServerRouterWorker;
+import com.bigyj.server.server.ServerPeerSender;
 
 /**
  * 服务器间链接管理holder
  */
 public class ServerPeerSenderHolder {
-	private ConcurrentHashMap<String, ServerRouterWorker> serverSenders =
+	private static ConcurrentHashMap<Long, ServerPeerSender> serverSenders =
 			new ConcurrentHashMap<>();
 
-	public void addWorker(String key,ServerRouterWorker serverRouterWorker){
-		serverSenders.putIfAbsent(key,serverRouterWorker);
+	public static void addWorker(Long key,ServerPeerSender serverPeerSender){
+		serverSenders.putIfAbsent(key,serverPeerSender);
 	}
 
-	public ServerRouterWorker getWorker(String key){
+	public static ServerPeerSender getWorker(Long key){
 		return serverSenders.get(key);
 	}
 
-	public void removeWorker(String key){
+	public static void removeWorker(Long key){
 		serverSenders.remove(key);
 	}
 }
