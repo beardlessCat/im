@@ -19,8 +19,9 @@ public class ServerBeatHandler extends ChannelInboundHandlerAdapter {
 
 	//在Handler被加入到Pipeline时，开始发送心跳
 	@Override
-	public void handlerAdded(ChannelHandlerContext ctx)
+	public void channelActive(ChannelHandlerContext ctx)
 			throws Exception {
+		logger.info("发送服务事件通知！");
 		//先发送上线通知
 		Msg msg = Msg.builder().setMsgType(Msg.MsgType.SERVER_NOTICE)
 				.setContent("i connected.......")
@@ -35,6 +36,8 @@ public class ServerBeatHandler extends ChannelInboundHandlerAdapter {
 							.build();
 					//发送心跳
 					heartBeat(ctx, new Gson().toJson(beat));
+				}else {
+					logger.error("服务事件通知发送失败！");
 				}
 			}
 		});

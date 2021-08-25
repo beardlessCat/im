@@ -24,7 +24,7 @@ public class ClientServerHeartBeatHandler extends IdleStateHandler {
             throws Exception {
         MsgDto msgObject = JSONObject.parseObject(msg.toString(), MsgDto.class);
         //判断消息实例
-        if (null == msgObject || msgObject.getMsgType()!=Msg.MsgType.HEART_PONG) {
+        if (null == msgObject || msgObject.getMsgType()!=Msg.MsgType.HEART_PING) {
             super.channelRead(ctx, msg);
             return;
         }
