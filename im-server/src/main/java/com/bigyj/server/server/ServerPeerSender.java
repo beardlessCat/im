@@ -48,7 +48,9 @@ public class ServerPeerSender {
 						pipeline.addLast("serverException",new ServerExceptionHandler());
 					}
 				});
-			this.channel = bootstrap.connect(serverNode.getHost(), serverNode.getPort()).sync().channel();
+			Channel connectChannel = bootstrap.connect(serverNode.getHost(), serverNode.getPort()).sync().channel();
+			//增加是连接成功监听、连接重试机制及连接关闭监听 fixme
+			this.channel = connectChannel;
 			logger.error("服务端{}作为客户端，加入{}成功",
 					ServerWorker.instance().getServerNode().getAddress(),
 					serverNode.getAddress());
