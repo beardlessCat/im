@@ -1,5 +1,7 @@
 package com.bigyj.server.worker;
 
+import com.alibaba.fastjson.JSONObject;
+import com.bigyj.entity.ServerNode;
 import com.bigyj.server.server.ServerPeerSender;
 import com.bigyj.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +60,11 @@ public class ServerRouterWorker {
 	}
 	private void processAdd(ChildData data) {
 		ServerPeerSender serverPeerSender = new ServerPeerSender();
-		serverPeerSender.doConnectedServer(data);
+		ServerNode serverNode = JSONObject.parseObject(data.getData(), ServerNode.class);
+		if(serverNode.getAddress().equals(serverNode.getAddress())){
+			logger.info("监听到自身节点加入，无需进行连接!");
+			return;
+		}
+		serverPeerSender.doConnectedServer(serverNode);
 	}
 }

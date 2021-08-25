@@ -15,7 +15,6 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 import lombok.Data;
-import org.apache.curator.framework.recipes.cache.ChildData;
 
 /**
  * 服务器间连接建立
@@ -30,10 +29,7 @@ public class ServerPeerSender {
 		bootstrap = new Bootstrap();
 		eventLoopGroup = new NioEventLoopGroup();
 	}
-	public void doConnectedServer(ChildData data){
-		byte[] data1 = data.getData();
-		Channel channel = null;
-		ServerNode serverNode = null;
+	public void doConnectedServer(ServerNode serverNode){
 		try {
 			bootstrap.group(eventLoopGroup)
 				.channel(NioSocketChannel.class)
