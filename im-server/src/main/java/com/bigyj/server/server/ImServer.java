@@ -72,9 +72,7 @@ public class ImServer {
                         //为node 设置id
                         serverNode.setId(NodeUtil.getIdByPath(pathRegistered,PATH_PREFIX));
                         logger.info("本地节点, path={}, id={}", pathRegistered, serverNode.getId());
-                        //fixme 管理serverNode
                         ServerWorker.instance().setServerNode(serverNode);
-
                         serverRouterWorker.init();
                     } else {
                         logger.error("服务端启动成失败");

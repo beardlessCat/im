@@ -61,7 +61,7 @@ public class ServerRouterWorker {
 	private void processAdd(ChildData data) {
 		ServerPeerSender serverPeerSender = new ServerPeerSender();
 		ServerNode serverNode = JSONObject.parseObject(data.getData(), ServerNode.class);
-		if(serverNode.getAddress().equals(serverNode.getAddress())){
+		if(ServerWorker.instance().getServerNode().getAddress().equals(serverNode.getAddress())){
 			logger.info("监听到自身节点加入，无需进行连接!");
 			return;
 		}

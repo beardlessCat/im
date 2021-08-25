@@ -8,6 +8,8 @@ import com.bigyj.entity.MsgDto;
 import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,11 +21,23 @@ public class ServerBeatHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx)
 			throws Exception {
-		Msg msg = Msg.builder().setMsgType(Msg.MsgType.HEART_PING)
-				.setContent("ping.......")
+		//先发送上线通知
+		Msg msg = Msg.builder().setMsgType(Msg.MsgType.SERVER_NOTICE)
+				.setContent("i connected.......")
 				.build();
-		//发送心跳
-		heartBeat(ctx, new Gson().toJson(msg));
+		ctx.writeAndFlush(new Gson().toJson(msg)+"\n").addListener(new GenericFutureListener<Future<? super Void>>() {
+			@Override
+			public void operationComplete(Future<? super Void> future) throws Exception {
+				if (future.isSuccess()) {
+					//上线通知发送成功后（服务端完成心跳handler的加入），发送心跳
+					Msg beat = Msg.builder().setMsgType(Msg.MsgType.HEART_PING)
+							.setContent("ping.......")
+							.build();
+					//发送心跳
+					heartBeat(ctx, new Gson().toJson(beat));
+				}
+			}
+		});
 	}
 
 	//使用定时器，发送心跳报文

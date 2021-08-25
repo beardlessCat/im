@@ -3,6 +3,7 @@ package com.bigyj.server.server;
 import com.bigyj.entity.ServerNode;
 import com.bigyj.server.handler.client.ServerBeatHandler;
 import com.bigyj.server.handler.client.ServerExceptionHandler;
+import com.bigyj.server.worker.ServerWorker;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -15,11 +16,13 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 服务器间连接建立
  */
 @Data
+@Slf4j
 public class ServerPeerSender {
 	private Channel channel ;
 	private Bootstrap bootstrap;
@@ -45,8 +48,10 @@ public class ServerPeerSender {
 						pipeline.addLast("serverException",new ServerExceptionHandler());
 					}
 				});
-			channel = bootstrap.connect(serverNode.getHost(), serverNode.getPort()).sync().channel();
-			this.channel = channel ;
+			this.channel = bootstrap.connect(serverNode.getHost(), serverNode.getPort()).sync().channel();
+			logger.error("服务端{}作为客户端，加入{}成功",
+					ServerWorker.instance().getServerNode().getAddress(),
+					serverNode.getAddress());
 		}catch (Exception e){
 			e.printStackTrace();
 		}
