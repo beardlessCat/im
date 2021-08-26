@@ -24,6 +24,13 @@ public class ServerNode implements Serializable {
 		this.port = port;
 	}
 
+	public ServerNode(long id, String host, Integer port, Integer weight) {
+		this.id = id;
+		this.host = host;
+		this.port = port;
+		this.weight = weight;
+	}
+
 	public String getAddress(){
 		return this.host+":"+this.port;
 	}
