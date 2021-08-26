@@ -35,7 +35,7 @@ public class HeartBeatServerHandler extends IdleStateHandler {
         if (ctx.channel().isActive()) {
             logger.info(msgObject.getContent());
             //将心跳包，直接回复给客户端
-            logger.info("pone.......");
+            //logger.info("pone.......");
             ctx.writeAndFlush(new Gson().toJson(pongMsg)+"\n");
         }
         super.channelRead(ctx, msg);

@@ -48,7 +48,7 @@ public class ServerBeatHandler extends ChannelInboundHandlerAdapter {
 			String heartbeatMsg) {
 		ctx.executor().schedule(() -> {
 			if (ctx.channel().isActive()) {
-				logger.info("ping.......");
+				//logger.info("ping.......");
 				ctx.writeAndFlush(heartbeatMsg+"\n");
 				//递归调用，发送下一次的心跳
 				heartBeat(ctx, heartbeatMsg);
