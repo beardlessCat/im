@@ -71,7 +71,7 @@ public class ServerBeatHandler extends ChannelInboundHandlerAdapter {
 		}
 		//判断类型
 		if (msgObject.getMsgType()== Msg.MsgType.HEART_PONG) {
-			logger.info(msgObject.getContent());
+			//logger.info(msgObject.getContent());
 			return;
 		} else {
 			super.channelRead(ctx, msg);
