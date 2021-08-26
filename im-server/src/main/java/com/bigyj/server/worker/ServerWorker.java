@@ -1,7 +1,6 @@
 package com.bigyj.server.worker;
 
 import com.bigyj.entity.ServerNode;
-import com.bigyj.server.utils.SpringContextUtil;
 import lombok.Data;
 
 /**
@@ -15,7 +14,6 @@ public class ServerWorker {
 	 */
 	private static final ServerWorker instance = new ServerWorker();
 	public static ServerWorker instance(){
-		ServerRouterWorker bean = SpringContextUtil.getBean(ServerRouterWorker.class);
 		return instance;
 	}
 

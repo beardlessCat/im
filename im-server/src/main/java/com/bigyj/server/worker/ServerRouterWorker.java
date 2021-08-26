@@ -14,15 +14,16 @@ import org.apache.curator.framework.recipes.cache.PathChildrenCache;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 @Slf4j
-@Component
 public class ServerRouterWorker {
 
 	private static final String MANAGE_PATH ="/im/nodes";
 	public static final String PATH_PREFIX = MANAGE_PATH + "/seq-";
+
+	private static final ServerRouterWorker instance = new ServerRouterWorker();
+	public static ServerRouterWorker instance(){
+		return instance;
+	}
 
 	private boolean inited = false;
 

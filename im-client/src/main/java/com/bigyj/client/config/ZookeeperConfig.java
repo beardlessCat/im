@@ -14,7 +14,7 @@ public class ZookeeperConfig {
 	@Value("${zk.url}")
 	private String zkUrl;
 
-	@Bean
+	@Bean("curatorFramework")
 	public CuratorFramework getCuratorFramework(){
 		RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000,3);
 		CuratorFramework client = CuratorFrameworkFactory.newClient(zkUrl,retryPolicy);

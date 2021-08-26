@@ -17,8 +17,7 @@ public class RemoteSession implements ServerSession {
 	@Override
 	public boolean writeAndFlush(MsgDto msg) {
 		long id = sessionCache.getServerNode().getId();
-		ServerRouterWorker serverRouterWorker = new ServerRouterWorker();
-		ServerPeerSender serverPeerSender = serverRouterWorker.router(id);
+		ServerPeerSender serverPeerSender = ServerRouterWorker.instance().router(id);
 		serverPeerSender.getChannel().writeAndFlush(msg);
 		return true;
 	}

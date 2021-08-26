@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 /**
  * Spring上下文工具, 用户获取bean或者HttpServletRequest
  */
+@Component
 public class SpringContextUtil implements ApplicationContextAware
 {
 

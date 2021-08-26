@@ -9,7 +9,7 @@ public class CuratorZKclient {
 	{
 		if (null == singleton)
 		{
-			singleton = SpringContextUtil.getBean("curatorFramework");
+			singleton = SpringContextUtil.getBean(CuratorFramework.class);
 		}
 		return singleton;
 	}

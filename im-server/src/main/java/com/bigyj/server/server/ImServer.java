@@ -1,7 +1,9 @@
 package com.bigyj.server.server;
 
-import com.bigyj.server.initializer.ImServerInitializer;
+import java.net.InetSocketAddress;
+
 import com.bigyj.entity.ServerNode;
+import com.bigyj.server.initializer.ImServerInitializer;
 import com.bigyj.server.registration.ZkService;
 import com.bigyj.server.worker.ServerRouterWorker;
 import com.bigyj.server.worker.ServerWorker;
@@ -19,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.net.InetSocketAddress;
-
 @Service("imServer")
 @Slf4j
 public class ImServer {
@@ -30,12 +30,10 @@ public class ImServer {
     public static final String PATH_PREFIX = MANAGE_PATH + "/seq-";
     private ZkService zkService;
     private ImServerInitializer imServerInitializer;
-    private ServerRouterWorker serverRouterWorker;
     @Autowired
-    ImServer(ZkService zkService,ImServerInitializer imServerInitializer ,ServerRouterWorker serverRouterWorker){
+    ImServer(ZkService zkService,ImServerInitializer imServerInitializer ){
         this.zkService = zkService;
         this.imServerInitializer = imServerInitializer ;
-        this.serverRouterWorker = serverRouterWorker;
     }
 
     private EventLoopGroup bossGroup ;
@@ -73,7 +71,7 @@ public class ImServer {
                         serverNode.setId(NodeUtil.getIdByPath(pathRegistered,PATH_PREFIX));
                         logger.info("本地节点, path={}, id={}", pathRegistered, serverNode.getId());
                         ServerWorker.instance().setServerNode(serverNode);
-                        serverRouterWorker.init();
+                        ServerRouterWorker.instance().init();
                     } else {
                         logger.error("服务端启动成失败");
                     }
