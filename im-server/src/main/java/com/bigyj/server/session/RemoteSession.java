@@ -4,6 +4,7 @@ import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.SessionCache;
 import com.bigyj.server.server.ServerPeerSender;
 import com.bigyj.server.worker.ServerRouterWorker;
+import com.google.gson.Gson;
 import lombok.Data;
 
 @Data
@@ -18,7 +19,7 @@ public class RemoteSession implements ServerSession {
 	public boolean writeAndFlush(MsgDto msg) {
 		long id = sessionCache.getServerNode().getId();
 		ServerPeerSender serverPeerSender = ServerRouterWorker.instance().router(id);
-		serverPeerSender.getChannel().writeAndFlush(msg);
+		serverPeerSender.getChannel().writeAndFlush(new Gson().toJson(msg)+"\n");
 		return true;
 	}
 
