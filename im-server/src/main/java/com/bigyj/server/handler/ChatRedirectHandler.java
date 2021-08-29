@@ -1,8 +1,13 @@
 package com.bigyj.server.handler;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
+import com.bigyj.server.holder.LocalSessionHolder;
+import com.bigyj.server.holder.ServerPeerSenderHolder;
+import com.bigyj.server.server.ServerPeerSender;
 import com.bigyj.server.session.LocalSession;
 import com.bigyj.server.session.ServerSession;
 import com.bigyj.server.manager.ServerSessionManager;
@@ -40,15 +45,30 @@ public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 
 	private void action(MsgDto msgObject,ChannelHandlerContext context) {
 		String toUserId = msgObject.getToUserId();
-		ServerSession serverSession = serverSessionManager.getServerSession(toUserId);
-		if(serverSession == null){
-			this.sentNotOnlineMsg(msgObject,toUserId,context);
+		//判断
+		if("ALL".equals(toUserId)){
+			//发送本地
+			ConcurrentHashMap<String, LocalSession> allLocal = LocalSessionHolder.getAll();
+			for(String key : allLocal.keySet()) {
+				allLocal.get(key).getChannel().writeAndFlush(new Gson().toJson(msgObject)+"/n");
+			}
+			//处理远程
+			ConcurrentHashMap<Long, ServerPeerSender> allRemote = ServerPeerSenderHolder.getAll();
+			for(Long key : allRemote.keySet()) {
+				allRemote.get(key).getChannel().writeAndFlush(new Gson().toJson(msgObject)+"/n");
+			}
 		}else {
-			boolean result = serverSession.writeAndFlush(msgObject);
-			if(!result){
+			ServerSession serverSession = serverSessionManager.getServerSession(toUserId);
+			if(serverSession == null){
+				this.sentNotOnlineMsg(msgObject,toUserId,context);
+			}else {
+				boolean result = serverSession.writeAndFlush(msgObject);
+				if(!result){
 
+				}
 			}
 		}
+
 	}
 
 	/**

@@ -21,5 +21,8 @@ public class LocalSessionHolder {
 		return serverSessions.remove(userId);
 	}
 
+	public static ConcurrentHashMap<String, LocalSession> getAll(){
+		return serverSessions;
+	}
 
 }

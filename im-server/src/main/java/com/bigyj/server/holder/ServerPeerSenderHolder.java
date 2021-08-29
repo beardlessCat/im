@@ -22,4 +22,9 @@ public class ServerPeerSenderHolder {
 	public static void removeWorker(Long key){
 		serverSenders.remove(key);
 	}
+
+	public static ConcurrentHashMap<Long, ServerPeerSender> getAll(){
+		return serverSenders;
+	}
+
 }
