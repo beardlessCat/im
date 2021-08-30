@@ -2,8 +2,7 @@
 ## 一、概述
 使用netty开发分布式Im，用于加深对netty的理解与im通讯技术的学习
 ## 二、集群架构
-![架构图](https://img-blog.csdnimg.cn/936a4f2dfa894d9c86cd231dc127374c.png
-)
+![架构图](https://img-blog.csdnimg.cn/27c34099715546f2945239a4688708d5.png)
 ### 1.客户端
 ### 2.服务路由
 ### 3.IM服务集群
