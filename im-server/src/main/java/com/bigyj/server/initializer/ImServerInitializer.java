@@ -1,5 +1,6 @@
 package com.bigyj.server.initializer;
 
+import com.bigyj.server.handler.ConnectedStatusChangetHandler;
 import com.bigyj.server.handler.LoginRequestHandler;
 import com.bigyj.server.handler.NoticeServerHandler;
 import io.netty.channel.ChannelInitializer;
@@ -20,15 +21,16 @@ public class ImServerInitializer extends ChannelInitializer<SocketChannel> {
     private  LoginRequestHandler loginRequestHandler;
     @Autowired
     private NoticeServerHandler noticeServerHandler ;
+    @Autowired
+    private ConnectedStatusChangetHandler connectedStatusChangetHandler ;
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast(new DelimiterBasedFrameDecoder(4096, Delimiters.lineDelimiter()));
         pipeline.addLast(new StringDecoder(CharsetUtil.UTF_8));
         pipeline.addLast("encoder",new StringEncoder(CharsetUtil.UTF_8));
+        pipeline.addLast("connectedStatusChange",connectedStatusChangetHandler);
         pipeline.addLast("login",loginRequestHandler);
         pipeline.addLast("notice",noticeServerHandler);
-
-
     }
 }
