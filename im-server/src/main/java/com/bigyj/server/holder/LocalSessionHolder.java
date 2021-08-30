@@ -10,7 +10,7 @@ public class LocalSessionHolder {
 			= new ConcurrentHashMap<>();
 
 	public static void addServerSession(LocalSession serverSession){
-		serverSessions.putIfAbsent(serverSession.getUser().getUid(),serverSession);
+		serverSessions.put(serverSession.getUser().getUid(),serverSession);
 	}
 
 	public static LocalSession getServerSession(String userId){

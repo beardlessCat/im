@@ -12,7 +12,7 @@ public class ServerPeerSenderHolder {
 			new ConcurrentHashMap<>();
 
 	public static void addWorker(Long key,ServerPeerSender serverPeerSender){
-		serverSenders.putIfAbsent(key,serverPeerSender);
+		serverSenders.put(key,serverPeerSender);
 	}
 
 	public static ServerPeerSender getWorker(Long key){

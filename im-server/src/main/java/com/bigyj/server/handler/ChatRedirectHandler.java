@@ -50,12 +50,12 @@ public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 			//发送本地
 			ConcurrentHashMap<String, LocalSession> allLocal = LocalSessionHolder.getAll();
 			for(String key : allLocal.keySet()) {
-				allLocal.get(key).getChannel().writeAndFlush(new Gson().toJson(msgObject)+"/n");
+				allLocal.get(key).getChannel().writeAndFlush(new Gson().toJson(msgObject)+"\n");
 			}
 			//处理远程
 			ConcurrentHashMap<Long, ServerPeerSender> allRemote = ServerPeerSenderHolder.getAll();
 			for(Long key : allRemote.keySet()) {
-				allRemote.get(key).getChannel().writeAndFlush(new Gson().toJson(msgObject)+"/n");
+				allRemote.get(key).getChannel().writeAndFlush(new Gson().toJson(msgObject)+"\n");
 			}
 		}else {
 			ServerSession serverSession = serverSessionManager.getServerSession(toUserId);
