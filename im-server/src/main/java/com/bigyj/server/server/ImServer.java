@@ -5,7 +5,6 @@ import java.net.InetSocketAddress;
 import com.bigyj.entity.ServerNode;
 import com.bigyj.server.initializer.ImServerInitializer;
 import com.bigyj.server.registration.ZkService;
-import com.bigyj.server.worker.ServerRouterWorker;
 import com.bigyj.server.worker.ServerWorker;
 import com.bigyj.utils.NodeUtil;
 import io.netty.bootstrap.ServerBootstrap;
@@ -71,7 +70,6 @@ public class ImServer {
                         serverNode.setId(NodeUtil.getIdByPath(pathRegistered,PATH_PREFIX));
                         logger.info("本地节点, path={}, id={}", pathRegistered, serverNode.getId());
                         ServerWorker.instance().setServerNode(serverNode);
-                        ServerRouterWorker.instance().init();
                     } else {
                         logger.error("服务端启动成失败");
                     }

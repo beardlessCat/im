@@ -37,7 +37,7 @@ public class ServerSessionManager {
 			serverSession = LocalSessionHolder.getServerSession(userId);
 		}else {
 			//远程服务
-			serverSession = new RemoteSession(sessionCache);
+			serverSession = new RemoteSession();
 		}
 		return serverSession;
 	}

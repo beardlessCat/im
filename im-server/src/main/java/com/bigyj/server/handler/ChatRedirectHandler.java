@@ -6,8 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
 import com.bigyj.server.holder.LocalSessionHolder;
-import com.bigyj.server.holder.ServerPeerSenderHolder;
-import com.bigyj.server.server.ServerPeerSender;
 import com.bigyj.server.session.LocalSession;
 import com.bigyj.server.session.ServerSession;
 import com.bigyj.server.manager.ServerSessionManager;
@@ -52,11 +50,7 @@ public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 			for(String key : allLocal.keySet()) {
 				allLocal.get(key).getChannel().writeAndFlush(new Gson().toJson(msgObject)+"\n");
 			}
-			//处理远程
-			ConcurrentHashMap<Long, ServerPeerSender> allRemote = ServerPeerSenderHolder.getAll();
-			for(Long key : allRemote.keySet()) {
-				allRemote.get(key).getChannel().writeAndFlush(new Gson().toJson(msgObject)+"\n");
-			}
+			//处理远程 fixme
 		}else {
 			ServerSession serverSession = serverSessionManager.getServerSession(toUserId);
 			if(serverSession == null){
@@ -64,11 +58,9 @@ public class ChatRedirectHandler extends ChannelInboundHandlerAdapter {
 			}else {
 				boolean result = serverSession.writeAndFlush(msgObject);
 				if(!result){
-
 				}
 			}
 		}
-
 	}
 
 	/**

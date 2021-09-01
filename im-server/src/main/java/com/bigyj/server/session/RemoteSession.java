@@ -1,25 +1,17 @@
 package com.bigyj.server.session;
 
 import com.bigyj.entity.MsgDto;
-import com.bigyj.entity.SessionCache;
-import com.bigyj.server.server.ServerPeerSender;
-import com.bigyj.server.worker.ServerRouterWorker;
+import com.bigyj.server.utils.SpringContextUtil;
 import com.google.gson.Gson;
 import lombok.Data;
+import org.springframework.data.redis.core.RedisTemplate;
 
 @Data
 public class RemoteSession implements ServerSession {
-	private SessionCache sessionCache;
-
-	public RemoteSession(SessionCache sessionCache) {
-		this.sessionCache = sessionCache;
-	}
-
 	@Override
 	public boolean writeAndFlush(MsgDto msg) {
-		long id = sessionCache.getServerNode().getId();
-		ServerPeerSender serverPeerSender = ServerRouterWorker.instance().router(id);
-		serverPeerSender.getChannel().writeAndFlush(new Gson().toJson(msg)+"\n");
+		RedisTemplate redisTemplate = SpringContextUtil.getBean(RedisTemplate.class);
+		redisTemplate.convertAndSend("imMessage", new Gson().toJson(msg));
 		return true;
 	}
 

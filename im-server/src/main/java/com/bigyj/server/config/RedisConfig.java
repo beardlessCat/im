@@ -30,10 +30,7 @@ public class RedisConfig {
 			MessageListenerAdapter listenerAdapter) {
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
-		//订阅主题messagepush和messagepush3
-		container.addMessageListener(listenerAdapter, new PatternTopic("messagepush"));
-		container.addMessageListener(listenerAdapter, new PatternTopic("messagepush3"));
-		//这个container 可以添加多个 messageListener
+		container.addMessageListener(listenerAdapter, new PatternTopic("imMessage"));
 		return container;
 	}
 
