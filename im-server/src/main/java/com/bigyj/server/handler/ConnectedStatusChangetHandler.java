@@ -18,13 +18,13 @@ public class ConnectedStatusChangetHandler extends ChannelInboundHandlerAdapter 
 			AttributeKey.valueOf("SESSION_KEY");
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		logger.error("================新的连接建立=================");
+		logger.info("================新的连接建立=================");
 		super.channelActive(ctx);
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		logger.error("=================连接断开====================");
+		logger.warn("=================连接断开====================");
 		LocalSession localSession = ctx.channel().attr(SESSION_KEY).get();
 		String uid = localSession.getUser().getUid();
 		LocalSessionHolder.removeServerSession(uid);

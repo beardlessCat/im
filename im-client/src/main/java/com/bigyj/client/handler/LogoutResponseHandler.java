@@ -18,17 +18,17 @@ public class LogoutResponseHandler extends ChannelInboundHandlerAdapter {
 			super.channelRead(ctx, msg);
 			return;
 		}
-		logger.error("收到退出响应消息"+ msg);
+		logger.info("收到退出响应消息"+ msg);
 		//判断登录成功还是登录失败
 		if(msgObject.isSuccess()){
 			//调整客户端登录状态
 			ClientSession.logOutSuccess(ctx,msgObject);
 			//增加退出的logourResponseHandler
-			ctx.pipeline().addBefore("chat","login",new LoginResponseHandler());
+			ctx.pipeline().addBefore("chat","login",new LoginRequestSendHandler());
 			//移除登录handler
 			ctx.pipeline().remove("chat");
 			ctx.pipeline().remove(this);
-			logger.error("用户退出成功！");
+			logger.info("用户退出成功！");
 		}else {
 			logger.error("用户退出失败");
 		}

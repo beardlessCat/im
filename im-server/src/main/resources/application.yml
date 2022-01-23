@@ -20,5 +20,6 @@ spring:
   # Redis配置
   ################################
   redis:
-    host: 127.0.0.1
-    port: 16379
+    host: demo.redis.cn
+    port: 6379
+    password: 123456

@@ -1,8 +1,10 @@
 package com.bigyj.message;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString(callSuper = true)
 public abstract class AbstractResponseMessage extends Message{
     private boolean success;
     private String reason;

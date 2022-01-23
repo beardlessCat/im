@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 @ChannelHandler.Sharable
 public class NoticeServerHandler  extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+		logger.info("收到消息。。。。。");
 		MsgDto msgObject = JSONObject.parseObject(msg.toString(), MsgDto.class);
 		logger.info("收到服务事件通知"+msg);
 		//判断消息实例

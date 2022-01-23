@@ -2,10 +2,11 @@ package com.bigyj.message;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 @Data
-public abstract class Message {
+public abstract class Message implements Serializable {
     /**
      * 根据消息类型字节，获得对应的消息 class
      * @param messageType 消息类型字节

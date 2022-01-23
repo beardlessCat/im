@@ -32,7 +32,7 @@ public class CommandManager {
     public void startClient() {
         Channel channel = imClient.doConnect();
         session = new ClientSession(channel);
-        this.startCommand();
+        //this.startCommand();
     }
 
     private void startCommand() {
@@ -82,7 +82,7 @@ public class CommandManager {
      * @param scanner
      */
     private void startChat(Scanner scanner) {
-        logger.error("开始聊天，请输入聊天内容(content@userId)");
+        logger.info("开始聊天，请输入聊天内容(content@userId)");
         while (true) {
             String content = scanner.next();
             if("EXIT".equals(content)){
@@ -112,7 +112,7 @@ public class CommandManager {
      */
     private void startLogin(Scanner scanner) {
         while (true) {
-            logger.error("开始登录，请输入用户名及token（userName@token）");
+            logger.info("开始登录，请输入用户名及token（userName@token）");
             String content = scanner.next();
             if(!content.contains("@")){
                 logger.error("登录内容格式为userName@token！");

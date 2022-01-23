@@ -59,7 +59,7 @@ public class ImServer {
                 @Override
                 public void operationComplete(Future<? super Void> future) throws Exception {
                     if (future.isSuccess()) {
-                        logger.error("服务端启动成功");
+                        logger.info("服务端启动成功");
                         //注册到zookeeper
                         //判断根节点是否存在
                         if (zkService.checkNodeExists(MANAGE_PATH)) {

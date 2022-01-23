@@ -1,8 +1,10 @@
 package com.bigyj.message;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString(callSuper = true)
 public class LoginRequestMessage extends Message{
     private String username;
     private String password;

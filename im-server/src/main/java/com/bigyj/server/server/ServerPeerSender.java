@@ -49,14 +49,12 @@ public class ServerPeerSender {
 						pipeline.addLast("serverBeat",new ServerBeatHandler());
 						//服务间的重连
 						pipeline.addLast("serverException",new ServerExceptionHandler());
-
-
 					}
 				});
 			Channel connectChannel = bootstrap.connect(serverNode.getHost(), serverNode.getPort()).sync().channel();
 			//增加是连接成功监听、连接重试机制及连接关闭监听 fixme
 			this.channel = connectChannel;
-			logger.error("服务端{}作为客户端，加入{}成功",
+			logger.info("服务端{}作为客户端，加入{}成功",
 					ServerWorker.instance().getServerNode().getAddress(),
 					serverNode.getAddress());
 		}catch (Exception e){

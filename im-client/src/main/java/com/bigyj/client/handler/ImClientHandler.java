@@ -11,6 +11,6 @@ public class ImClientHandler extends SimpleChannelInboundHandler<String> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
         MsgDto msgObject = JSONObject.parseObject(msg, MsgDto.class);
-        logger.error("收到用户的{}消息：{}",msgObject.getUser().getNickName(),msgObject.getContent());
+        logger.info("收到用户的{}消息：{}",msgObject.getUser().getNickName(),msgObject.getContent());
     }
 }

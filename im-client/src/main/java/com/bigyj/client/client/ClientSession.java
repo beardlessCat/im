@@ -100,7 +100,7 @@ public class ClientSession {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    logger.error("连接顺利断开");
+                    logger.info("连接顺利断开");
                 }
             }
         });

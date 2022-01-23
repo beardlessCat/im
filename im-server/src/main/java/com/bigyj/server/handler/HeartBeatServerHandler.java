@@ -43,7 +43,7 @@ public class HeartBeatServerHandler extends IdleStateHandler {
 
     @Override
     protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) throws Exception {
-        logger.info(READ_IDLE_GAP + "秒内未读到数据，关闭连接");
+        logger.warn(READ_IDLE_GAP + "秒内未读到数据，关闭连接");
         LocalSession.closeSession(ctx);
     }
 }
