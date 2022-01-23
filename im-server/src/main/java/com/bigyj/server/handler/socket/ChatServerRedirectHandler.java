@@ -1,4 +1,4 @@
-package com.bigyj.server.handler;
+package com.bigyj.server.handler.socket;
 
 import com.bigyj.message.ChatResponseMessage;
 import com.bigyj.message.GroupRemoteChatRequestMessage;
@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * 接收到其他服务端转发来的请求，获取所有本地连接进行消息发送
  */
 @Slf4j
-@Component
 @ChannelHandler.Sharable
 public class ChatServerRedirectHandler extends SimpleChannelInboundHandler<GroupRemoteChatRequestMessage> {
 

@@ -1,4 +1,4 @@
-package com.bigyj.server.handler;
+package com.bigyj.server.handler.socket;
 
 import com.bigyj.message.LoginRequestMessage;
 import com.bigyj.message.LoginResponseMessage;

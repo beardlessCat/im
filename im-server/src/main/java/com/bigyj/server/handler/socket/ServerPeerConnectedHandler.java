@@ -1,4 +1,4 @@
-package com.bigyj.server.handler;
+package com.bigyj.server.handler.socket;
 
 import com.bigyj.message.ServerPeerConnectedMessage;
 import io.netty.channel.ChannelDuplexHandler;
@@ -16,8 +16,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class ServerPeerConnectedHandler extends SimpleChannelInboundHandler<ServerPeerConnectedMessage> {
-    @Autowired
-    private ChatServerRedirectHandler chatServerRedirectHandler ;
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ServerPeerConnectedMessage msg) throws Exception {
         ctx.pipeline().addLast(new IdleStateHandler(200, 0, 0));
@@ -35,7 +34,7 @@ public class ServerPeerConnectedHandler extends SimpleChannelInboundHandler<Serv
             }
         });
         //增加聊天的handler
-        ctx.pipeline().addLast("chat", chatServerRedirectHandler);
+        ctx.pipeline().addLast("chat", new ChatServerRedirectHandler());
         //增加退出的handler
         ctx.pipeline().addLast("logout", new DisconnectedHandler());
     }
