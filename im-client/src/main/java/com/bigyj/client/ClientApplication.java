@@ -9,6 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class ClientApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(ClientApplication.class, args);
+        //服务启动成功后开启客户端
         startClient(context);
     }
 

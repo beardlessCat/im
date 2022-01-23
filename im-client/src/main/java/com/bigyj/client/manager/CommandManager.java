@@ -36,27 +36,27 @@ public class CommandManager {
     }
 
     private void startCommand() {
-        logger.error("请输入相关命令：1-登录；2-开始聊天；3-退出登录");
+        logger.info("请输入相关命令：1-登录；2-开始聊天；3-退出登录");
         while (true){
             Scanner scanner = new Scanner(System.in);
             String key = scanner.next();
             if("1".equals(key)){
                 boolean login = isLogin();
                 if(login){
-                    logger.error("您已登录！");
+                    logger.warn("您已登录！");
                     continue;
                 }
                 this.startLogin(scanner);
             }else if("2".equals(key)) {
                 boolean login = isLogin();
                 if(!login){
-                    logger.error("请先登录");
+                    logger.warn("请先登录");
                     continue;
                 }
                 this.startChat(scanner);
             }else if("3".equals(key)){
                 if (!isLogin()) {
-                    logger.info("还没有登录，请先登录");
+                    logger.warn("还没有登录，请先登录");
                     continue;
                 }
                 this.startLogout();
