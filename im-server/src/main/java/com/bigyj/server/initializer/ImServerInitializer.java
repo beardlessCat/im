@@ -27,6 +27,6 @@ public class ImServerInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new ChatMessageCodec());
 //        pipeline.addLast("connectedStatusChange",connectedStatusChangetHandler);
         pipeline.addLast("login",loginRequestHandler);
-        pipeline.addLast("notice",noticeServerHandler);
+//        pipeline.addLast("notice",noticeServerHandler);
     }
 }

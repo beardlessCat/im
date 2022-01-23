@@ -55,7 +55,6 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
         serverSession.bind();
         //连接信息保存至redis数据库
         serverSessionManager.addServerSession(serverSession);
-
         //发送登录响应信息
         LoginResponseMessage responseMessage = new LoginResponseMessage(validateSuccess,"登录成功");
         ctx.writeAndFlush(responseMessage).addListener(future -> {
@@ -64,9 +63,9 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
                 //增加心跳handler
                 ctx.pipeline().addAfter("login", "heartBeat",new HeartBeatServerHandler());
                 //增加退出的handler
-                ctx.pipeline().addAfter("login","logout",logoutRequestHandler);
+//                ctx.pipeline().addAfter("login","logout",logoutRequestHandler);
                 //增加聊天的handler
-                ctx.pipeline().addAfter("logout", "chat",  chatRedirectHandler);
+//                ctx.pipeline().addAfter("logout", "chat",  chatRedirectHandler);
                 //移除登录handler
                 ctx.pipeline().remove("login");
             }else {
