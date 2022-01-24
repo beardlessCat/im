@@ -1,5 +1,4 @@
 rootProject.name = 'im'
-include 'im-common'
-include 'im-client'
-include 'im-server'
+include 'websocket-common'
+include 'websocket-server'
 
