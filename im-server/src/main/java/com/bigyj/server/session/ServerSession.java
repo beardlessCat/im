@@ -1,13 +1,10 @@
 package com.bigyj.server.session;
 
-import com.bigyj.message.ChatRequestMessage;
-import com.bigyj.message.GroupChatRequestMessage;
+import com.bigyj.message.websocket.WebSocketMessage;
 
 public interface ServerSession {
 
-	boolean writeAndFlush(ChatRequestMessage chatRequestMessage);
-
-	boolean writeGroupMessage(GroupChatRequestMessage groupChatRequestMessage );
+	boolean writeAndFlush(WebSocketMessage webSocketMessage);
 
 	String getSessionId();
 

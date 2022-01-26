@@ -1,9 +1,10 @@
 package com.bigyj.message.websocket;
 
+import com.bigyj.message.Message;
 import lombok.Data;
 
 @Data
-public class WebSocketMessage {
+public class WebSocketMessage extends Message {
     private String from ;
     private String to;
     private String content;
@@ -12,5 +13,10 @@ public class WebSocketMessage {
         this.from = from;
         this.to = to;
         this.content = content;
+    }
+
+    @Override
+    public int getMessageType() {
+        return 0;
     }
 }

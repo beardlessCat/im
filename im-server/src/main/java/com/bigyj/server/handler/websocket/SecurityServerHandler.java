@@ -20,8 +20,9 @@ public class SecurityServerHandler extends SimpleChannelInboundHandler<FullHttpR
         HttpHeaders headers = request.headers();
         String token = headers.get("token");
         if(-1 != url.indexOf("/ws")) {
+            String userName = url.split("\\?")[1];
             //check token
-            SecurityCheckResult checkResult = this.validateToken();
+            SecurityCheckResult checkResult = this.validateToken(userName);
             if(checkResult.success){
                 SecurityCheckComplete complete = new SecurityCheckComplete(token, checkResult.getUserId());
                 ctx.channel().attr(SECURITY_CHECK_COMPLETE_ATTRIBUTE_KEY).set(complete);
@@ -35,8 +36,8 @@ public class SecurityServerHandler extends SimpleChannelInboundHandler<FullHttpR
         }
     }
 
-    private SecurityCheckResult validateToken() {
-        return new SecurityCheckResult("tom",true);
+    private SecurityCheckResult validateToken(String userName) {
+        return new SecurityCheckResult(userName,true);
     }
 
     @Override

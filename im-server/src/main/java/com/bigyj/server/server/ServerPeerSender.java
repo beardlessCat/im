@@ -26,7 +26,7 @@ public class ServerPeerSender {
 	private Channel channel ;
 	private Bootstrap bootstrap;
 	private EventLoopGroup eventLoopGroup;
-	private static final int WRITE_IDLE_GAP = 150;
+	private static final int WRITE_IDLE_GAP = 15;
 
 	public ServerPeerSender() {
 		bootstrap = new Bootstrap();
@@ -62,6 +62,7 @@ public class ServerPeerSender {
 							public void channelActive(ChannelHandlerContext ctx) throws Exception {
 								ctx.writeAndFlush(new ServerPeerConnectedMessage());
 							}
+
 						});
 						//服务间的重连 fixme
 //						pipeline.addLast("serverException",new ServerExceptionHandler());

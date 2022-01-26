@@ -29,11 +29,9 @@ public class ImServer {
     private static final String MANAGE_PATH ="/im/nodes";
     public static final String PATH_PREFIX = MANAGE_PATH + "/seq-";
     private ZkService zkService;
-    private ImServerInitializer imServerInitializer;
     @Autowired
-    ImServer(ZkService zkService,ImServerInitializer imServerInitializer ){
+    ImServer(ZkService zkService ){
         this.zkService = zkService;
-        this.imServerInitializer = imServerInitializer ;
     }
 
     private EventLoopGroup bossGroup ;
@@ -48,7 +46,7 @@ public class ImServer {
             serverBootstrap.group(bossGroup, workerGroup)
             //2 设置nio类型的channel
             .channel(NioServerSocketChannel.class)
-            .childHandler(imServerInitializer)
+            .childHandler(new ImServerInitializer())
                     .localAddress(new InetSocketAddress(PORT));
             // 通过调用sync同步方法阻塞直到绑定成功
             ChannelFuture channelFuture = serverBootstrap.bind().sync();

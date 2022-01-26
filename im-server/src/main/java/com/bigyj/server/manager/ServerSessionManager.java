@@ -55,5 +55,14 @@ public class ServerSessionManager {
 		SessionCache sessionCache = new SessionCache(userId,sessionId,serverNode) ;
 		sessionCacheSupport.save(sessionCache);
 	}
-
+	/**
+	 * 保存servreSession
+	 * @param localSession
+	 */
+	public void removeServerSession(String userId){
+		//添加至本地session
+		LocalSessionHolder.removeServerSession(userId);
+		//存储至redis数据库中
+		sessionCacheSupport.remove(userId);
+	}
 }

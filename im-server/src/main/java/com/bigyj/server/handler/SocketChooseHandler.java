@@ -2,11 +2,14 @@ package com.bigyj.server.handler;
 
 import com.bigyj.protocol.ChatMessageCodec;
 import com.bigyj.protocol.ProtocolFrameDecoder;
-import com.bigyj.server.handler.socket.ServerPeerConnectedHandler;
+import com.bigyj.server.handler.socket.ChatServerRedirectHandler;
+import com.bigyj.server.handler.socket.ChatServerRedirectHandler01;
+import com.bigyj.server.handler.socket.DisconnectedHandler;
 import com.bigyj.server.handler.websocket.SecurityServerHandler;
 import com.bigyj.server.handler.websocket.TextWebSocketFrameHandler;
 import com.bigyj.server.handler.websocket.WebsocketServerFinishHandler;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -14,6 +17,9 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +27,6 @@ import java.util.List;
 @Slf4j
 @Component
 public class SocketChooseHandler extends ByteToMessageDecoder {
-
     /** 默认暗号长度为23 */
     private static final int MAX_LENGTH = 23;
     /** WebSocket握手的协议前缀 */
@@ -48,16 +53,36 @@ public class SocketChooseHandler extends ByteToMessageDecoder {
             pipeline.addLast(new WebsocketServerFinishHandler());
             //websocket定义了传递数据的6中frame类型
             pipeline.addLast(new TextWebSocketFrameHandler());
-            //移除当前handler
-            pipeline.remove("socketChooseHandler");
+
         }else {
             logger.info("tcpSocket协议");
             //处理粘包与半包
             pipeline.addLast(new ProtocolFrameDecoder());
             //加入新的协议编码与界面器
             pipeline.addLast(new ChatMessageCodec());
-            pipeline.addLast(new ServerPeerConnectedHandler());
+            ctx.pipeline().addLast(new IdleStateHandler(200, 0, 0));
+            // ChannelDuplexHandler 可以同时作为入站和出站处理器
+            ctx.pipeline().addLast(new ChannelDuplexHandler() {
+                // 用来触发特殊事件
+                @Override
+                public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception{
+                    IdleStateEvent event = (IdleStateEvent) evt;
+                    // 触发了读空闲事件·
+                    if (event.state() == IdleState.READER_IDLE) {
+                        logger.info("已经 200s 没有读到数据了");
+                        ctx.channel().close();
+                    }
+                }
+            });
+            //增加聊天的handler
+            pipeline.addLast(new ChatServerRedirectHandler01());
+
+            pipeline.addLast(new ChatServerRedirectHandler());
+            //增加退出的handler
+            pipeline.addLast("logout", new DisconnectedHandler());
         }
+        //移除当前handler
+        pipeline.remove("socketChooseHandler");
     }
 
     private String getBufStart(ByteBuf in){

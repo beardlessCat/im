@@ -1,7 +1,7 @@
 package com.bigyj.server.session;
 
 import com.bigyj.entity.SessionCache;
-import com.bigyj.message.ChatRequestMessage;
+import com.bigyj.message.websocket.WebSocketMessage;
 import com.bigyj.server.server.ServerPeerSender;
 import com.bigyj.server.worker.ServerRouterWorker;
 import lombok.Data;
@@ -15,11 +15,11 @@ public class RemoteSession extends AbstractServerSession {
 	}
 
 	@Override
-	public boolean writeAndFlush(ChatRequestMessage chatRequestMessage) {
+	public boolean writeAndFlush(WebSocketMessage webSocketMessage) {
 		//获取对方用户所在的服务器，将消息转发至对方服务器（该服务器作为客户端）。
 		long id = sessionCache.getServerNode().getId();
 		ServerPeerSender serverPeerSender = ServerRouterWorker.instance().router(id);
-		serverPeerSender.getChannel().writeAndFlush(chatRequestMessage);
+		serverPeerSender.getChannel().writeAndFlush(webSocketMessage);
 		return true;
 	}
 

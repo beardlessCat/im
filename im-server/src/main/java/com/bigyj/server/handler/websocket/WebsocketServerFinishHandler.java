@@ -1,7 +1,9 @@
 package com.bigyj.server.handler.websocket;
 
 import com.bigyj.server.manager.MemoryUserManager;
+import com.bigyj.server.manager.ServerSessionManager;
 import com.bigyj.server.session.LocalSession;
+import com.bigyj.server.utils.SpringContextUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
@@ -13,7 +15,6 @@ public class WebsocketServerFinishHandler extends ChannelInboundHandlerAdapter {
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof SecurityServerHandler.SecurityCheckComplete) {
             logger.info("Security check has passed");
-            SecurityServerHandler.SecurityCheckComplete complete = (SecurityServerHandler.SecurityCheckComplete) evt;
         } else if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
             logger.info("Handshake has completed");
             SecurityServerHandler.SecurityCheckComplete complete = ctx.channel().attr(SecurityServerHandler.SECURITY_CHECK_COMPLETE_ATTRIBUTE_KEY).get();
@@ -21,9 +22,9 @@ public class WebsocketServerFinishHandler extends ChannelInboundHandlerAdapter {
             LocalSession serverSession = new LocalSession(ctx.channel());
             serverSession.setUser(MemoryUserManager.getUserByName(complete.getUserId()));
             serverSession.bind();
-
-            // DeviceDataServer.this.listener.postConnect(complete.getConnectionUUID(),
-            //         new DeviceConnection(ctx.channel(), complete.getDeviceDescription()));
+            //连接信息保存至redis数据库
+            ServerSessionManager serverSessionManager = SpringContextUtil.getBean(ServerSessionManager.class);
+            serverSessionManager.addServerSession(serverSession);
         }
         super.userEventTriggered(ctx, evt);
     }

@@ -4,9 +4,9 @@ import com.bigyj.server.handler.SocketChooseHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
-@Component
+@Slf4j
 public class ImServerInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override

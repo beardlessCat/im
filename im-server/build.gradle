@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'junit:junit:4.13.1'
     implementation project(':im-common')
     implementation libraries.netty
     implementation libraries.springBootStarterWeb

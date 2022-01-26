@@ -1,16 +1,19 @@
 package com.bigyj.server.handler.websocket;
 
 import com.bigyj.message.websocket.WebSocketMessage;
-import com.bigyj.server.holder.LocalSessionHolder;
-import com.bigyj.server.session.LocalSession;
+import com.bigyj.server.manager.MemoryUserManager;
+import com.bigyj.server.manager.ServerSessionManager;
+import com.bigyj.server.session.AbstractServerSession;
+import com.bigyj.server.utils.SpringContextUtil;
 import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import lombok.extern.slf4j.Slf4j;
 
 //处理文本协议数据，处理TextWebSocketFrame类型的数据，websocket专门处理文本的frame就是TextWebSocketFrame
+@Slf4j
 public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
-
     //读到客户端的内容并且向客户端去写内容
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
@@ -27,12 +30,26 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 
     //webSocket消息转发
     private void action(ChannelHandlerContext ctx,WebSocketMessage webSocketMessage) {
-        //        ctx.channel().writeAndFlush(new TextWebSocketFrame("服务时间："+ LocalDateTime.now()));
-        String userName = webSocketMessage.getTo();
-        LocalSession serverSession = LocalSessionHolder.getServerSession(userName);
-        WebSocketMessage content = new WebSocketMessage(webSocketMessage.getFrom(), webSocketMessage.getTo(), webSocketMessage.getContent());
-        serverSession.getChannel().writeAndFlush(new TextWebSocketFrame(new Gson().toJson(content)));
+        String userId = webSocketMessage.getTo();
+        ServerSessionManager serverSessionManager = SpringContextUtil.getBean(ServerSessionManager.class);
+        //判断用户是否在线
+        String toUid = MemoryUserManager.getUserByName(userId).getUid();
+        AbstractServerSession serverSession = serverSessionManager.getServerSession(toUid);
+        webSocketMessage.setTo(toUid);
+        if(serverSession == null){
+            this.sentNotOnlineMsg(webSocketMessage,userId,ctx);
+        }else {
+            boolean result = serverSession.writeAndFlush(webSocketMessage);
+            if(!result){
+            }
+        }
     }
+
+    private void sentNotOnlineMsg(WebSocketMessage webSocketMessage, String toUserId, ChannelHandlerContext ctx) {
+        logger.error("用户{} 不在线，消息发送失败!",toUserId);
+        ctx.writeAndFlush(new TextWebSocketFrame(webSocketMessage.getTo()+"用户不存在或者不在线"));
+    }
+
 
     //每个channel都有一个唯一的id值
     @Override
@@ -44,6 +61,8 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         System.out.println("handlerRemoved：" + ctx.channel().id().asLongText());
+        ServerSessionManager serverSessionManager = SpringContextUtil.getBean(ServerSessionManager.class);
+        serverSessionManager.removeServerSession(ctx.channel().attr(SecurityServerHandler.SECURITY_CHECK_COMPLETE_ATTRIBUTE_KEY).get().getUserId());
     }
 
     @Override

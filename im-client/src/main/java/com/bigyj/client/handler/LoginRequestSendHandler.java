@@ -72,7 +72,7 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 					String[] s = command.split(" ");
 					switch (s[0]){
 						case "send":
-							ctx.writeAndFlush(new ChatRequestMessage(username, s[1], s[2]));
+							ctx.writeAndFlush(new ServerRequestMessage(username, s[1], s[2]));
 							break;
 						case "gSend":
 							ctx.writeAndFlush(new GroupChatRequestMessage(username,s[1]));
