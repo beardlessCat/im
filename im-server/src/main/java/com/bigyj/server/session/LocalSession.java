@@ -5,6 +5,8 @@ import java.util.UUID;
 import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.User;
+import com.bigyj.message.ChatRequestMessage;
+import com.bigyj.message.Message;
 import com.bigyj.server.holder.LocalSessionHolder;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
@@ -36,19 +38,13 @@ public class LocalSession implements ServerSession {
 	}
 
 	@Override
-	public boolean writeAndFlush(MsgDto msgObject) {
-		String toUserId = msgObject.getToUserId();
+	public boolean writeAndFlush(ChatRequestMessage msgObject) {
+		String toUserId = msgObject.getTo();
 		LocalSession localSession = LocalSessionHolder.getServerSession(toUserId);
 		if(localSession== null){
 			return false;
 		}else {
-			User user = msgObject.getUser();
-			Msg msg = Msg.builder(Msg.MsgType.CHAT, user)
-					.setContent(msgObject.getContent())
-					.setSuccess(true)
-					.setToUserId(toUserId)
-					.build();
-			localSession.getChannel().writeAndFlush(new Gson().toJson(msg)+"\n");
+			localSession.getChannel().writeAndFlush(msgObject);
 			return true;
 		}
 	}

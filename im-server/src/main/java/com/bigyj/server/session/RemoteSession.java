@@ -2,6 +2,7 @@ package com.bigyj.server.session;
 
 import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.SessionCache;
+import com.bigyj.message.ChatRequestMessage;
 import com.bigyj.server.server.ServerPeerSender;
 import com.bigyj.server.worker.ServerRouterWorker;
 import com.google.gson.Gson;
@@ -16,10 +17,10 @@ public class RemoteSession implements ServerSession {
 	}
 
 	@Override
-	public boolean writeAndFlush(MsgDto msg) {
+	public boolean writeAndFlush(ChatRequestMessage msg) {
 		long id = sessionCache.getServerNode().getId();
 		ServerPeerSender serverPeerSender = ServerRouterWorker.instance().router(id);
-		serverPeerSender.getChannel().writeAndFlush(new Gson().toJson(msg)+"\n");
+		serverPeerSender.getChannel().writeAndFlush(msg);
 		return true;
 	}
 

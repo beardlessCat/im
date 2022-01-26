@@ -1,13 +1,15 @@
 package com.bigyj.server.session;
 
 import com.bigyj.entity.MsgDto;
+import com.bigyj.message.ChatRequestMessage;
+import com.bigyj.message.Message;
 
 public interface ServerSession {
 	/**
 	 * 发送消息
 	 * @param pkg 消息
 	 */
-	boolean writeAndFlush(MsgDto pkg);
+	boolean writeAndFlush(ChatRequestMessage pkg);
 
 	/**
 	 * 获取sessionId
