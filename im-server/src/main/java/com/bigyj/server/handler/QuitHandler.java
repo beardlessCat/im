@@ -1,27 +1,34 @@
 package com.bigyj.server.handler;
 
-import com.alibaba.fastjson.JSONObject;
-import com.bigyj.entity.Msg;
-import com.bigyj.entity.MsgDto;
 import com.bigyj.server.cach.SessionCacheSupport;
-import com.bigyj.server.holder.LocalSessionHolder;
-import com.bigyj.server.session.LocalSession;
-import com.google.gson.Gson;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * 客户端退出处理逻辑
+ * fixme 调整客户端绑定逻辑
+ */
 @Slf4j
 @Component
 @ChannelHandler.Sharable
-public class LogoutRequestHandler extends ChannelInboundHandlerAdapter {
+public class QuitHandler extends ChannelInboundHandlerAdapter {
     @Autowired
     private SessionCacheSupport sessionCacheSupport;
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
@@ -46,14 +53,6 @@ public class LogoutRequestHandler extends ChannelInboundHandlerAdapter {
 //        ctx.pipeline().remove(this);
 //        //移除redis缓存新
 //        sessionCacheSupport.remove(uid);
-        super.channelRead(ctx,msg);
-    }
-
-    private void sengLogoutResponse(ChannelHandlerContext context,MsgDto msgObject) {
-        Msg msg = Msg.builder(Msg.MsgType.LOGOUT_RESPONSE, msgObject.getUser())
-                .setSuccess(true)
-                .build();
-        Channel channel = context.channel();
-        channel.writeAndFlush(new Gson().toJson(msg)+"\r\n");
+//        super.channelRead(ctx,msg);
     }
 }

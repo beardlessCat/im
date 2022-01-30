@@ -89,12 +89,12 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 	}
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		LoginResponseMessage loginResponseMessage = (LoginResponseMessage) msg;
 		//判断消息实例
-		if (null == msg || (loginResponseMessage.getMessageType()!= Message.LoginResponseMessage)) {
+		if(!(msg instanceof LoginResponseMessage)){
 			super.channelRead(ctx, msg);
 			return;
 		}
+		LoginResponseMessage loginResponseMessage = (LoginResponseMessage) msg;
 		logger.info("收到登录响应消息"+ msg);
 		//判断登录成功还是登录失败
 		if(loginResponseMessage.isSuccess()){
@@ -103,8 +103,6 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 			ChannelPipeline pipeline = ctx.pipeline();
 			//增加聊天的handler
 			pipeline.addLast("chat",  new ChatClientHandler());
-			//增加退出的logourResponseHandler
-			pipeline.addLast("logout",new LogoutResponseHandler());
 			//增加心跳
 			pipeline.addLast(new IdleStateHandler(0, WRITE_IDLE_GAP, 0));
 			// ChannelDuplexHandler 可以同时作为入站和出站处理器
@@ -120,13 +118,25 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 					}
 				}
 			});
-			//移除登录handler
-			ctx.pipeline().remove("login");
 			LOGIN.set(true);
 			//唤醒阻塞线程
 			WAIT_FOR_LOGIN.countDown();
 		}else {
 			logger.error("用户登录失败");
 		}
+	}
+
+	// 在连接断开时触发
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		logger.info("连接已经断开，按任意键退出..");
+		EXIT.set(true);
+	}
+
+	// 在出现异常时触发
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		logger.info("连接已经断开，按任意键退出..{}", cause.getMessage());
+		EXIT.set(true);
 	}
 }

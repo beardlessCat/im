@@ -1,20 +1,15 @@
 package com.bigyj.server.handler;
 
-import com.alibaba.fastjson.JSONObject;
-import com.bigyj.entity.Msg;
-import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.User;
 import com.bigyj.message.LoginRequestMessage;
 import com.bigyj.message.LoginResponseMessage;
 import com.bigyj.message.Message;
-import com.bigyj.server.session.LocalSession;
 import com.bigyj.server.manager.ServerSessionManager;
-import com.google.gson.Gson;
-import io.netty.channel.*;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
+import com.bigyj.server.session.LocalSession;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,12 +17,10 @@ import org.springframework.stereotype.Component;
 @Component
 @ChannelHandler.Sharable
 public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
-    private static final int READ_IDLE_GAP = 150;
-
     @Autowired
     private ServerSessionManager serverSessionManager ;
     @Autowired
-    private LogoutRequestHandler logoutRequestHandler;
+    private QuitHandler logoutRequestHandler;
     @Autowired
     private ChatRedirectHandler chatRedirectHandler ;
     @Override
