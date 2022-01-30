@@ -68,6 +68,7 @@ public class LocalSession implements ServerSession {
 		String uuid = UUID.randomUUID().toString();
 		return uuid.replaceAll("-", "");
 	}
+
 	//反向导航
 	public static LocalSession getSession(ChannelHandlerContext ctx) {
 		Channel channel = ctx.channel();

@@ -1,6 +1,8 @@
 package com.bigyj.server.handler;
 
 import com.bigyj.server.cach.SessionCacheSupport;
+import com.bigyj.server.holder.LocalSessionHolder;
+import com.bigyj.server.session.LocalSession;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -21,38 +23,29 @@ public class QuitHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        super.channelInactive(ctx);
+        this.clientDisconnected(ctx);
+        logger.info("客户端断开连接");
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
+        this.clientDisconnected(ctx);
+        logger.info("客户端异常断开连接");
+
     }
 
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg)
-            throws Exception {
-//        MsgDto msgObject = JSONObject.parseObject(msg.toString(), MsgDto.class);
-//        //判断消息实例
-//        if (null == msg || (msgObject.getMsgType()!= Msg.MsgType.LOGOUT_REQUEST)) {
-//            super.channelRead(ctx, msg);
-//            return;
-//        }
-//        logger.info("收到登出消息"+ msg);
-//        String uid = msgObject.getUser().getUid();
-//        LocalSessionHolder.removeServerSession(uid);
-//        //保存channel信息
-//        LocalSession serverSession = new LocalSession(ctx.channel());
-//        serverSession.setLogin(false);
-//        this.sengLogoutResponse(ctx,msgObject);
-//        //增加登录的handler
-//        ctx.pipeline().addAfter("chat", "login",  new LoginRequestHandler());
-//        //移除退出handler
-//        ctx.pipeline().remove("chat");
-//        //移除
-//        ctx.pipeline().remove(this);
-//        //移除redis缓存新
-//        sessionCacheSupport.remove(uid);
-//        super.channelRead(ctx,msg);
+    /**
+     * 客户单主动断开连接或异常断开连接
+     * @param ctx
+     */
+    private void clientDisconnected(ChannelHandlerContext ctx) {
+        LocalSession session = LocalSession.getSession(ctx);
+        String userId = session.getUserId();
+        LocalSessionHolder.removeServerSession(userId);
+        //保存channel信息
+        LocalSession serverSession = new LocalSession(ctx.channel());
+        serverSession.setLogin(false);
+        //移除redis缓存新
+        sessionCacheSupport.remove(userId);
     }
 }
