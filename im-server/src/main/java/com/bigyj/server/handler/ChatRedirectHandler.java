@@ -2,6 +2,7 @@ package com.bigyj.server.handler;
 
 import com.bigyj.message.ChatRequestMessage;
 import com.bigyj.message.ChatResponseMessage;
+import com.bigyj.server.manager.MemoryUserManager;
 import com.bigyj.server.manager.ServerSessionManager;
 import com.bigyj.server.session.LocalSession;
 import com.bigyj.server.session.ServerSession;
@@ -32,11 +33,11 @@ public class ChatRedirectHandler extends SimpleChannelInboundHandler<ChatRequest
 	}
 
 	private void action(ChatRequestMessage chatRequestMessage,ChannelHandlerContext context) {
-		String toUserId = chatRequestMessage.getTo();
+		String userName = chatRequestMessage.getTo();
 		//判断用户是否在线
-		ServerSession serverSession = serverSessionManager.getServerSession(toUserId);
+		ServerSession serverSession = serverSessionManager.getServerSession(MemoryUserManager.getUserByName(userName).getUid());
 		if(serverSession == null){
-			this.sentNotOnlineMsg(chatRequestMessage,toUserId,context);
+			this.sentNotOnlineMsg(chatRequestMessage,userName,context);
 		}else {
 			boolean result = serverSession.writeAndFlush(chatRequestMessage);
 			if(!result){

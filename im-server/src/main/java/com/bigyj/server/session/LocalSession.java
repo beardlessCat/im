@@ -1,20 +1,17 @@
 package com.bigyj.server.session;
 
-import java.util.UUID;
-
-import com.bigyj.entity.Msg;
-import com.bigyj.entity.MsgDto;
-import com.bigyj.entity.User;
+import com.bigyj.server.manager.MemoryUserManager;
+import com.bigyj.user.User;
 import com.bigyj.message.ChatRequestMessage;
 import com.bigyj.message.ChatResponseMessage;
-import com.bigyj.message.Message;
 import com.bigyj.server.holder.LocalSessionHolder;
-import com.google.gson.Gson;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.UUID;
 
 @Slf4j
 @Data
@@ -40,9 +37,9 @@ public class LocalSession implements ServerSession {
 
 	@Override
 	public boolean writeAndFlush(ChatRequestMessage msgObject) {
-		String toUserId = msgObject.getTo();
+		String userName = msgObject.getTo();
 		ChatResponseMessage chatResponseMessage = new ChatResponseMessage(msgObject.getFrom(),msgObject.getContent()) ;
-		LocalSession localSession = LocalSessionHolder.getServerSession(toUserId);
+		LocalSession localSession = LocalSessionHolder.getServerSession(MemoryUserManager.getUserByName(userName).getUid());
 		if(localSession== null){
 			return false;
 		}else {
@@ -53,8 +50,9 @@ public class LocalSession implements ServerSession {
 
 	@Override
 	public String getSessionId() {
-		return null;
+		return sessionId;
 	}
+
 	@Override
 	public boolean isValid() {
 		return getUser() != null ? true : false;

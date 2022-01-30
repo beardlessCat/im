@@ -1,14 +1,19 @@
 package com.bigyj.server.handler;
 
-import com.bigyj.entity.User;
 import com.bigyj.message.LoginRequestMessage;
 import com.bigyj.message.LoginResponseMessage;
 import com.bigyj.message.Message;
+import com.bigyj.server.manager.MemoryUserManager;
 import com.bigyj.server.manager.ServerSessionManager;
 import com.bigyj.server.session.LocalSession;
+import com.bigyj.user.User;
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,26 +31,27 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
-        LoginRequestMessage loginRequestMessage = (LoginRequestMessage) msg;
-
-        //判断消息实例
-        if (null == msg || (loginRequestMessage.getMessageType()!= Message.LoginRequestMessage)) {
+        if(!(msg instanceof LoginRequestMessage)){
             super.channelRead(ctx, msg);
             return;
         }
+        LoginRequestMessage loginRequestMessage = (LoginRequestMessage) msg;
         logger.info("收到请求登录消息"+ msg);
         String username = loginRequestMessage.getUsername();
         String passWord = loginRequestMessage.getPassword();
         boolean validateSuccess = this.validateUser(username, passWord);
         if(!validateSuccess){
-//            this.sengLoginResponse(ctx,msgObject,validateflag);
+            //登录失败，发送失败消息
+            LoginResponseMessage responseMessage = new LoginResponseMessage(false,"失败");
+            ctx.writeAndFlush(responseMessage);
+            return;
         }
         //保存channel信息
         LocalSession serverSession = new LocalSession(ctx.channel());
-        //fixme
-        serverSession.setUser(new User().setNickName(username));
-        logger.info(serverSession.getUser().getNickName()+"登录成功!");
+        serverSession.setUser(MemoryUserManager.getUserByName(username));
+        logger.info(serverSession.getUser().getUserName()+"登录成功!");
         serverSession.bind();
+
         //连接信息保存至redis数据库
         serverSessionManager.addServerSession(serverSession);
         //发送登录响应信息
@@ -54,23 +60,36 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
             //消息发送成功
             if (future.isSuccess()) {
                 //增加心跳handler
-                ctx.pipeline().addAfter("login", "heartBeat",new HeartBeatServerHandler());
-                //增加退出的handler
-                ctx.pipeline().addAfter("login","logout",logoutRequestHandler);
+                ctx.pipeline().addLast(new IdleStateHandler(20, 0, 0));
+                // ChannelDuplexHandler 可以同时作为入站和出站处理器
+                ctx.pipeline().addLast(new ChannelDuplexHandler() {
+                    // 用来触发特殊事件
+                    @Override
+                    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception{
+                        IdleStateEvent event = (IdleStateEvent) evt;
+                        // 触发了读空闲事件
+                        if (event.state() == IdleState.READER_IDLE) {
+                            logger.info("已经 5s 没有读到数据了");
+                            ctx.channel().close();
+                        }
+                    }
+                });
                 //增加聊天的handler
-                ctx.pipeline().addAfter("logout", "chat",  chatRedirectHandler);
-                //移除登录handler
-                ctx.pipeline().remove("login");
+                ctx.pipeline().addLast("chat",  chatRedirectHandler);
+                //增加退出的handler
+                ctx.pipeline().addLast("logout",logoutRequestHandler);
             }else {
                 logger.error("登录响应消息发送失败！");
             }
         });
     }
 
-    private boolean validateUser(String nickName, String token) {
-        //fixme 验证用户登录信息
-        logger.info("用户{}请求登录，token为{}",nickName,token);
-        return true;
+    private boolean validateUser(String userName, String password) {
+        User user = MemoryUserManager.getUserByName(userName);
+        if(user!=null){
+            return user.getPassWord().equals(password);
+        }
+        return false;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.bigyj.client;
 
-import com.bigyj.client.manager.CommandManager;
+import com.bigyj.client.client.ImClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -14,7 +14,7 @@ public class ClientApplication {
     }
 
     private static void startClient(ConfigurableApplicationContext context) {
-        CommandManager imClient = context.getBean(CommandManager.class);
-        imClient.startClient();
+        ImClient imClient = context.getBean(ImClient.class);
+        imClient.doConnect();
     }
 }

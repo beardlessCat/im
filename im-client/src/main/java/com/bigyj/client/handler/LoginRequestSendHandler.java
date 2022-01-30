@@ -1,7 +1,9 @@
 package com.bigyj.client.handler;
 
-import com.bigyj.client.client.ClientSession;
-import com.bigyj.message.*;
+import com.bigyj.message.ChatRequestMessage;
+import com.bigyj.message.LoginRequestMessage;
+import com.bigyj.message.LoginResponseMessage;
+import com.bigyj.message.PingMessage;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -22,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 	Scanner scanner = new Scanner(System.in);
 	CountDownLatch WAIT_FOR_LOGIN = new CountDownLatch(1);
-	private static final int WRITE_IDLE_GAP = 3;
+	private static final int WRITE_IDLE_GAP = 15;
 
 	AtomicBoolean LOGIN = new AtomicBoolean(false);
 	AtomicBoolean EXIT = new AtomicBoolean(false);
@@ -31,59 +33,60 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		logger.info("连接建立成功");
 		new Thread(() -> {
-			System.out.println("请输入用户名:");
-			String username = scanner.nextLine();
-			if (EXIT.get()) {
-				return;
-			}
-			System.out.println("请输入密码:");
-			String password = scanner.nextLine();
-			if (EXIT.get()) {
-				return;
-			}
-			//发送登录请求
-			LoginRequestMessage loginRequestMessage = new LoginRequestMessage(username,password);
-			ctx.writeAndFlush(loginRequestMessage);
-			try {
-				WAIT_FOR_LOGIN.await();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			//登录失败
-			if(!LOGIN.get()){
-				logger.warn("{}用户登录失败！");
-				ctx.channel().close();
-			}
-			logger.info("登录成功，请输入如下指令：");
-			while (true) {
-				System.out.println("==================================");
-				System.out.println("send [username] [content]");
-				System.out.println("gsend [group name] [content]");
-				System.out.println("gcreate [group name] [m1,m2,m3...]");
-				System.out.println("gmembers [group name]");
-				System.out.println("gjoin [group name]");
-				System.out.println("gquit [group name]");
-				System.out.println("quit");
-				System.out.println("==================================");
-				String command = null;
-				try {
-					command = scanner.nextLine();
-				} catch (Exception e) {
-					break;
-				}
-				if(EXIT.get()){
+//			while (true) {
+				System.out.println("请输入用户名:");
+				String username = scanner.nextLine();
+				if (EXIT.get()) {
 					return;
 				}
-				String[] s = command.split(" ");
-				switch (s[0]){
-					case "send":
-						ctx.writeAndFlush(new ChatRequestMessage(username, s[1], s[2]));
-						break;
-					case "quit":
-						ctx.channel().close();
-						return;
+				System.out.println("请输入密码:");
+				String password = scanner.nextLine();
+				if (EXIT.get()) {
+					return;
 				}
-			}
+				//发送登录请求
+				LoginRequestMessage loginRequestMessage = new LoginRequestMessage(username,password);
+				ctx.writeAndFlush(loginRequestMessage);
+				try {
+					WAIT_FOR_LOGIN.await();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				//登录失败
+				if(!LOGIN.get()){
+					return;
+				}
+				logger.info("登录成功，请输入如下指令：");
+				while (true) {
+					System.out.println("==================================");
+					System.out.println("send [username] [content]");
+					System.out.println("gsend [group name] [content]");
+					System.out.println("gcreate [group name] [m1,m2,m3...]");
+					System.out.println("gmembers [group name]");
+					System.out.println("gjoin [group name]");
+					System.out.println("gquit [group name]");
+					System.out.println("quit");
+					System.out.println("==================================");
+					String command = null;
+					try {
+						command = scanner.nextLine();
+					} catch (Exception e) {
+						break;
+					}
+					if(EXIT.get()){
+						return;
+					}
+					String[] s = command.split(" ");
+					switch (s[0]){
+						case "send":
+							ctx.writeAndFlush(new ChatRequestMessage(username, s[1], s[2]));
+							break;
+						case "quit":
+							ctx.channel().close();
+							return;
+					}
+				}
+//			}
 		},"scanner in").start();
 
 	}
@@ -95,11 +98,10 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 		LoginResponseMessage loginResponseMessage = (LoginResponseMessage) msg;
-		logger.info("收到登录响应消息"+ msg);
+		logger.info("收到登录返回消息：{}",loginResponseMessage);
 		//判断登录成功还是登录失败
 		if(loginResponseMessage.isSuccess()){
 			//调整客户端登录状态
-			ClientSession.loginSuccess(ctx,null);
 			ChannelPipeline pipeline = ctx.pipeline();
 			//增加聊天的handler
 			pipeline.addLast("chat",  new ChatClientHandler());
@@ -113,7 +115,7 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 					IdleStateEvent event = (IdleStateEvent) evt;
 					// 触发了写空闲事件
 					if (event.state() == IdleState.WRITER_IDLE) {
-						logger.debug("3s 没有写数据了，发送一个心跳包");
+						logger.debug("{} 没有写数据了，发送一个心跳包",WRITE_IDLE_GAP);
 						ctx.writeAndFlush(new PingMessage());
 					}
 				}
@@ -123,6 +125,7 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 			WAIT_FOR_LOGIN.countDown();
 		}else {
 			logger.error("用户登录失败");
+			WAIT_FOR_LOGIN.countDown();
 		}
 	}
 

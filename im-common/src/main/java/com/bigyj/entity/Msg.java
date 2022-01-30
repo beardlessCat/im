@@ -1,5 +1,6 @@
 package com.bigyj.entity;
 
+import com.bigyj.user.User;
 import lombok.Data;
 
 @Data
