@@ -1,11 +1,9 @@
 package com.bigyj.server.session;
 
-import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.SessionCache;
 import com.bigyj.message.ChatRequestMessage;
 import com.bigyj.server.server.ServerPeerSender;
 import com.bigyj.server.worker.ServerRouterWorker;
-import com.google.gson.Gson;
 import lombok.Data;
 
 @Data

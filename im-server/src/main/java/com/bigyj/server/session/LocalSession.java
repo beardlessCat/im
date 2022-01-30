@@ -6,6 +6,7 @@ import com.bigyj.entity.Msg;
 import com.bigyj.entity.MsgDto;
 import com.bigyj.entity.User;
 import com.bigyj.message.ChatRequestMessage;
+import com.bigyj.message.ChatResponseMessage;
 import com.bigyj.message.Message;
 import com.bigyj.server.holder.LocalSessionHolder;
 import com.google.gson.Gson;
@@ -40,11 +41,12 @@ public class LocalSession implements ServerSession {
 	@Override
 	public boolean writeAndFlush(ChatRequestMessage msgObject) {
 		String toUserId = msgObject.getTo();
+		ChatResponseMessage chatResponseMessage = new ChatResponseMessage(msgObject.getFrom(),msgObject.getContent()) ;
 		LocalSession localSession = LocalSessionHolder.getServerSession(toUserId);
 		if(localSession== null){
 			return false;
 		}else {
-			localSession.getChannel().writeAndFlush(msgObject);
+			localSession.getChannel().writeAndFlush(chatResponseMessage);
 			return true;
 		}
 	}

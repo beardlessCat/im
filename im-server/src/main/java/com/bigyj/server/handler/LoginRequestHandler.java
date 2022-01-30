@@ -62,10 +62,10 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
             if (future.isSuccess()) {
                 //增加心跳handler
                 ctx.pipeline().addAfter("login", "heartBeat",new HeartBeatServerHandler());
-                //增加聊天的handler
-                ctx.pipeline().addAfter("logout", "chat",  chatRedirectHandler);
                 //增加退出的handler
                 ctx.pipeline().addAfter("login","logout",logoutRequestHandler);
+                //增加聊天的handler
+                ctx.pipeline().addAfter("logout", "chat",  chatRedirectHandler);
                 //移除登录handler
                 ctx.pipeline().remove("login");
             }else {

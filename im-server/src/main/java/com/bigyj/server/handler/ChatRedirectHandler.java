@@ -1,6 +1,7 @@
 package com.bigyj.server.handler;
 
 import com.bigyj.message.ChatRequestMessage;
+import com.bigyj.message.ChatResponseMessage;
 import com.bigyj.server.manager.ServerSessionManager;
 import com.bigyj.server.session.LocalSession;
 import com.bigyj.server.session.ServerSession;
@@ -39,7 +40,6 @@ public class ChatRedirectHandler extends SimpleChannelInboundHandler<ChatRequest
 		}else {
 			boolean result = serverSession.writeAndFlush(chatRequestMessage);
 			if(!result){
-
 			}
 		}
 
@@ -48,9 +48,10 @@ public class ChatRedirectHandler extends SimpleChannelInboundHandler<ChatRequest
 	/**
 	 * 告知客户端用户不在线
 	 * @param toUserId
-	 * @param context
+	 * @param ctx
 	 */
-	private void sentNotOnlineMsg(ChatRequestMessage chatRequestMessage,String toUserId,ChannelHandlerContext context) {
-		logger.error("[\" + {} + \"] 不在线，发送失败!",toUserId);
+	private void sentNotOnlineMsg(ChatRequestMessage chatRequestMessage,String toUserId,ChannelHandlerContext ctx) {
+		logger.error("用户{} 不在线，消息发送失败!",toUserId);
+		ctx.writeAndFlush(new ChatResponseMessage(false, chatRequestMessage.getTo()+"用户不存在或者不在线"));
 	}
 }

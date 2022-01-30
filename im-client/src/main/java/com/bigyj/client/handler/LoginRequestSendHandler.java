@@ -1,10 +1,7 @@
 package com.bigyj.client.handler;
 
 import com.bigyj.client.client.ClientSession;
-import com.bigyj.message.LoginRequestMessage;
-import com.bigyj.message.LoginResponseMessage;
-import com.bigyj.message.Message;
-import com.bigyj.message.PingMessage;
+import com.bigyj.message.*;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -25,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 	Scanner scanner = new Scanner(System.in);
 	CountDownLatch WAIT_FOR_LOGIN = new CountDownLatch(1);
-	private static final int WRITE_IDLE_GAP = 5;
+	private static final int WRITE_IDLE_GAP = 3;
 
 	AtomicBoolean LOGIN = new AtomicBoolean(false);
 	AtomicBoolean EXIT = new AtomicBoolean(false);
@@ -78,6 +75,14 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 					return;
 				}
 				String[] s = command.split(" ");
+				switch (s[0]){
+					case "send":
+						ctx.writeAndFlush(new ChatRequestMessage(username, s[1], s[2]));
+						break;
+					case "quit":
+						ctx.channel().close();
+						return;
+				}
 			}
 		},"scanner in").start();
 
@@ -97,7 +102,7 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 			ClientSession.loginSuccess(ctx,null);
 			ChannelPipeline pipeline = ctx.pipeline();
 			//增加聊天的handler
-			pipeline.addLast("chat",  new ImClientHandler());
+			pipeline.addLast("chat",  new ChatClientHandler());
 			//增加退出的logourResponseHandler
 			pipeline.addLast("logout",new LogoutResponseHandler());
 			//增加心跳
@@ -110,7 +115,7 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 					IdleStateEvent event = (IdleStateEvent) evt;
 					// 触发了写空闲事件
 					if (event.state() == IdleState.WRITER_IDLE) {
-						logger.info("3s 没有写数据了，发送一个心跳包");
+						logger.debug("3s 没有写数据了，发送一个心跳包");
 						ctx.writeAndFlush(new PingMessage());
 					}
 				}

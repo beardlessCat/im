@@ -1,8 +1,6 @@
 package com.bigyj.server.session;
 
-import com.bigyj.entity.MsgDto;
 import com.bigyj.message.ChatRequestMessage;
-import com.bigyj.message.Message;
 
 public interface ServerSession {
 	/**
