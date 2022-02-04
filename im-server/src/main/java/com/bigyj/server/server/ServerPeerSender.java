@@ -1,6 +1,7 @@
 package com.bigyj.server.server;
 
 import com.bigyj.entity.ServerNode;
+import com.bigyj.message.ChatRequestMessage;
 import com.bigyj.message.PingMessage;
 import com.bigyj.protocol.ChatMessageCodec;
 import com.bigyj.server.handler.ChatRedirectHandler;
@@ -41,8 +42,6 @@ public class ServerPeerSender {
 						ChannelPipeline pipeline = ch.pipeline();
 						//编解码handler
 						pipeline.addLast("codec", new ChatMessageCodec());
-						//服务间消息转发
-						pipeline.addLast("serverChatRedirect",new ChatRedirectHandler());
 						//增加心跳
 						pipeline.addLast(new IdleStateHandler(0, WRITE_IDLE_GAP, 0));
 						// ChannelDuplexHandler 可以同时作为入站和出站处理器
@@ -53,8 +52,9 @@ public class ServerPeerSender {
 								IdleStateEvent event = (IdleStateEvent) evt;
 								// 触发了写空闲事件
 								if (event.state() == IdleState.WRITER_IDLE) {
-									logger.debug("{} 没有写数据了，发送一个心跳包",WRITE_IDLE_GAP);
+									logger.debug("{} 没有写数据了，发送一个心跳包[服务间]",WRITE_IDLE_GAP);
 									ctx.writeAndFlush(new PingMessage());
+
 								}
 							}
 						});
