@@ -29,6 +29,7 @@ public class QuitHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+
         this.clientDisconnected(ctx);
         logger.info("客户端异常断开连接");
 

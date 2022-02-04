@@ -2,7 +2,6 @@ package com.bigyj.server.handler;
 
 import com.bigyj.message.LoginRequestMessage;
 import com.bigyj.message.LoginResponseMessage;
-import com.bigyj.message.Message;
 import com.bigyj.server.manager.MemoryUserManager;
 import com.bigyj.server.manager.ServerSessionManager;
 import com.bigyj.server.session.LocalSession;
