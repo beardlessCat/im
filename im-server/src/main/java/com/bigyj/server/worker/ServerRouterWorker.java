@@ -77,6 +77,7 @@ public class ServerRouterWorker {
 			return;
 		}
 		serverPeerSender.doConnectedServer(serverNode);
+		logger.info("新节点加入：{}",serverNode);
 		ServerPeerSenderHolder.addWorker(id,serverPeerSender);
 	}
 

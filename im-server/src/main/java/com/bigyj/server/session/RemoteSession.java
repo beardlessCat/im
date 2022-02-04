@@ -15,10 +15,11 @@ public class RemoteSession implements ServerSession {
 	}
 
 	@Override
-	public boolean writeAndFlush(ChatRequestMessage msg) {
+	public boolean writeAndFlush(ChatRequestMessage chatRequestMessage) {
+		//获取对方用户所在的服务器，将消息转发至对方服务器（该服务器作为客户端）。
 		long id = sessionCache.getServerNode().getId();
 		ServerPeerSender serverPeerSender = ServerRouterWorker.instance().router(id);
-		serverPeerSender.getChannel().writeAndFlush(msg);
+		serverPeerSender.getChannel().writeAndFlush(chatRequestMessage);
 		return true;
 	}
 

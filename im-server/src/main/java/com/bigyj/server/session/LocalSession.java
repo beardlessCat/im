@@ -1,10 +1,10 @@
 package com.bigyj.server.session;
 
-import com.bigyj.server.manager.MemoryUserManager;
-import com.bigyj.user.User;
 import com.bigyj.message.ChatRequestMessage;
 import com.bigyj.message.ChatResponseMessage;
 import com.bigyj.server.holder.LocalSessionHolder;
+import com.bigyj.server.manager.MemoryUserManager;
+import com.bigyj.user.User;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
@@ -36,9 +36,10 @@ public class LocalSession implements ServerSession {
 	}
 
 	@Override
-	public boolean writeAndFlush(ChatRequestMessage msgObject) {
-		String userName = msgObject.getTo();
-		ChatResponseMessage chatResponseMessage = new ChatResponseMessage(msgObject.getFrom(),msgObject.getContent()) ;
+	public boolean writeAndFlush(ChatRequestMessage chatRequestMessage) {
+		//获取channel，发送消息
+		String userName = chatRequestMessage.getTo();
+		ChatResponseMessage chatResponseMessage = new ChatResponseMessage(chatRequestMessage.getFrom(),chatRequestMessage.getContent()) ;
 		LocalSession localSession = LocalSessionHolder.getServerSession(MemoryUserManager.getUserByName(userName).getUid());
 		if(localSession== null){
 			return false;

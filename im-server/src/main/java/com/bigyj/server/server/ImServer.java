@@ -52,9 +52,7 @@ public class ImServer {
                     .localAddress(new InetSocketAddress(PORT));
             // 通过调用sync同步方法阻塞直到绑定成功
             ChannelFuture channelFuture = serverBootstrap.bind().sync();
-            logger.info(
-                    "IM 服务启动, 端口 " +
-                            channelFuture.channel().localAddress());
+            logger.info("服务启动, 端口 " +channelFuture.channel().localAddress());
             channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override
                 public void operationComplete(Future<? super Void> future) throws Exception {
