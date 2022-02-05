@@ -1,16 +1,22 @@
 package com.bigyj.server.server;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.bigyj.entity.ServerNode;
+import com.bigyj.server.config.NettyServerConfig;
+import com.bigyj.server.config.SocketConfig;
 import com.bigyj.server.initializer.ImServerInitializer;
 import com.bigyj.server.registration.ZkService;
 import com.bigyj.server.worker.ServerRouterWorker;
 import com.bigyj.server.worker.ServerWorker;
 import com.bigyj.utils.NodeUtil;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.Future;
@@ -37,17 +43,24 @@ public class WebsocketServer {
     private EventLoopGroup bossGroup ;
 
     private EventLoopGroup workerGroup ;
-
+    NettyServerConfig nettyServerConfig = new NettyServerConfig();
     public void startImServer() {
-        bossGroup = new NioEventLoopGroup();
-        workerGroup = new NioEventLoopGroup();
+        initGroup();
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         try {
+            //判断是否支持epoll
+            Class<? extends ServerChannel> channelClass = NioServerSocketChannel.class;
+            if (useEpoll()) {
+                channelClass = EpollServerSocketChannel.class;
+            }
             serverBootstrap.group(bossGroup, workerGroup)
             //2 设置nio类型的channel
-            .channel(NioServerSocketChannel.class)
+            .channel(channelClass)
             .childHandler(new ImServerInitializer())
-                    .localAddress(new InetSocketAddress(PORT));
+            .localAddress(new InetSocketAddress(PORT));
+
+            applyConnectionOptions(serverBootstrap);
+
             // 通过调用sync同步方法阻塞直到绑定成功
             ChannelFuture channelFuture = serverBootstrap.bind().sync();
             logger.info("服务启动, 端口 " +channelFuture.channel().localAddress());
@@ -86,5 +99,71 @@ public class WebsocketServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+    //配置连接属性
+    private void applyConnectionOptions(ServerBootstrap bootstrap) {
+
+        SocketConfig config = nettyServerConfig.getSocketConfig();
+        bootstrap.childOption(ChannelOption.TCP_NODELAY, config.isTcpNoDelay());
+        if (config.getTcpSendBufferSize() != -1) {
+            bootstrap.childOption(ChannelOption.SO_SNDBUF, config.getTcpSendBufferSize());
+        }
+        if (config.getTcpReceiveBufferSize() != -1) {
+            bootstrap.childOption(ChannelOption.SO_RCVBUF, config.getTcpReceiveBufferSize());
+            bootstrap.childOption(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(config.getTcpReceiveBufferSize()));
+        }
+        bootstrap.childOption(ChannelOption.SO_KEEPALIVE, config.isTcpKeepAlive());
+        bootstrap.childOption(ChannelOption.SO_LINGER, config.getSoLinger());
+
+        bootstrap.option(ChannelOption.SO_REUSEADDR, config.isReuseAddress());
+        bootstrap.option(ChannelOption.SO_BACKLOG, config.getAcceptBackLog());
+    }
+
+    private void initGroup() {
+        if(useEpoll()){
+            bossGroup = new EpollEventLoopGroup(nettyServerConfig.getBossThreads(),new ThreadFactory() {
+                private AtomicInteger threadIndex = new AtomicInteger(0);
+
+                @Override
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, String.format("NettyEPOLLBoss_%d", this.threadIndex.incrementAndGet()));
+                }
+            });
+            workerGroup = new EpollEventLoopGroup(nettyServerConfig.getWorkerThreads(),new ThreadFactory() {
+                private AtomicInteger threadIndex = new AtomicInteger(0);
+                private int threadTotal = nettyServerConfig.getWorkerThreads();
+
+                @Override
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, String.format("NettyServerEPOLLSelector_%d_%d", threadTotal, this.threadIndex.incrementAndGet()));
+                }
+            });
+        }else {
+
+            bossGroup = new NioEventLoopGroup(nettyServerConfig.getBossThreads(), new ThreadFactory() {
+                private AtomicInteger threadIndex = new AtomicInteger(0);
+
+                @Override
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, String.format("NettyNIOBoss_%d", this.threadIndex.incrementAndGet()));
+                }
+            });
+
+            workerGroup = new NioEventLoopGroup(nettyServerConfig.getWorkerThreads(), new ThreadFactory() {
+                private AtomicInteger threadIndex = new AtomicInteger(0);
+                private int threadTotal = nettyServerConfig.getWorkerThreads();
+
+                @Override
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, String.format("NettyServerNIOSelector_%d_%d", threadTotal, this.threadIndex.incrementAndGet()));
+                }
+            });
+        }
+
+    }
+
+    private boolean useEpoll() {
+        return  nettyServerConfig.isUseEpollNativeSelector()
+                && Epoll.isAvailable();
     }
 }

@@ -1,0 +1,84 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket客户端</title>
+</head>
+<body>
+<script type="text/javascript">
+    let socket;
+
+    let heartCheck = {
+        timeout: 6000,//60ms
+        timeoutObj: null,
+        serverTimeoutObj: null,
+        reset: function(){
+            clearTimeout(this.timeoutObj);
+            clearTimeout(this.serverTimeoutObj);
+            this.start();
+        },
+        start: function(){
+            let self = this;
+            this.timeoutObj = setTimeout(function(){
+                socket.send('{"to":"tom","content":"beat"}');
+                self.serverTimeoutObj = setTimeout(function(){
+                    socket.close();
+                }, self.timeout)
+            }, this.timeout)
+        },
+    }
+
+
+
+    //参数就是与服务器连接的地址
+    socket = new WebSocket("ws://10.1.112.132:18080/ws?tom");
+
+    //客户端收到服务器消息的时候就会执行这个回调方法
+    socket.onmessage = function (event) {
+        let ta = document.getElementById("responseText");
+        ta.value = ta.value + "\n"+event.data;
+        heartCheck.reset();
+    }
+
+    //连接建立的回调函数
+    socket.onopen = function(event){
+        let ta = document.getElementById("responseText");
+        ta.value = "连接开启";
+        heartCheck.start();
+
+    }
+
+    //连接断掉的回调函数
+    socket.onclose = function (event) {
+        let ta = document.getElementById("responseText");
+        ta.value = ta.value +"\n"+"连接关闭";
+    }
+
+    //发送数据
+    function send(message){
+        if(!window.WebSocket){
+            return;
+        }
+
+        //当websocket状态打开
+        if(socket.readyState == WebSocket.OPEN){
+            socket.send(message);
+        }else{
+            alert("连接没有开启");
+        }
+    }
+
+</script>
+<form onsubmit="return false">
+    <textarea name = "message" style="width: 400px;height: 200px">{"to":"tom","content":"hello"}</textarea>
+
+    <input type ="button" value="发送数据" onclick="send(this.form.message.value);">
+
+    <h3>服务器输出：</h3>
+
+    <textarea id ="responseText" style="width: 400px;height: 300px;"></textarea>
+
+    <input type="button" onclick="javascript:document.getElementById('responseText').value=''" value="清空数据">
+</form>
+</body>
+</html>

@@ -32,3 +32,4 @@ out/
 .vscode/
 
 !.gitignore
+/web/node_modules/

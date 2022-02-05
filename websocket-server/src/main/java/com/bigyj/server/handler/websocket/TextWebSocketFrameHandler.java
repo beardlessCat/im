@@ -62,7 +62,8 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         System.out.println("handlerRemoved：" + ctx.channel().id().asLongText());
         ServerSessionManager serverSessionManager = SpringContextUtil.getBean(ServerSessionManager.class);
-        serverSessionManager.removeServerSession(ctx.channel().attr(SecurityServerHandler.SECURITY_CHECK_COMPLETE_ATTRIBUTE_KEY).get().getUserId());
+        String userName = ctx.channel().attr(SecurityServerHandler.SECURITY_CHECK_COMPLETE_ATTRIBUTE_KEY).get().getUserId();
+        serverSessionManager.removeServerSession(MemoryUserManager.getUserByName(userName).getUid());
     }
 
     @Override
