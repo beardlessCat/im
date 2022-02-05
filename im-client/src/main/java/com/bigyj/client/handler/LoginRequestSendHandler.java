@@ -117,6 +117,8 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 					if (event.state() == IdleState.WRITER_IDLE) {
 						logger.debug("{} 没有写数据了，发送一个心跳包",WRITE_IDLE_GAP);
 						ctx.writeAndFlush(new PingMessage());
+//						ctx.writeAndFlush(new ChatRequestMessage("betty","tom","peer"));
+
 					}
 				}
 			});

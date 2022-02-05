@@ -1,12 +1,10 @@
 package com.bigyj.entity;
 
-import java.io.Serializable;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-@AllArgsConstructor
 public class SessionCache implements Serializable {
 	//用户的id
 	private String userId;
@@ -15,6 +13,12 @@ public class SessionCache implements Serializable {
 
 	//节点信息
 	private ServerNode serverNode;
+
+	public SessionCache(String userId, String sessionId, ServerNode serverNode) {
+		this.userId = userId;
+		this.sessionId = sessionId;
+		this.serverNode = serverNode;
+	}
 
 	public SessionCache()
 	{

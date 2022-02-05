@@ -22,18 +22,23 @@ public class QuitHandler extends ChannelInboundHandlerAdapter {
     private SessionCacheSupport sessionCacheSupport;
 
     @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        super.channelRead(ctx, msg);
+    }
+
+    @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         this.clientDisconnected(ctx);
         logger.info("客户端断开连接");
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-
-        this.clientDisconnected(ctx);
-        logger.info("客户端异常断开连接");
-
-    }
+//    @Override
+//    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+//
+//        this.clientDisconnected(ctx);
+//        logger.info("客户端异常断开连接");
+//
+//    }
 
     /**
      * 客户单主动断开连接或异常断开连接

@@ -21,16 +21,16 @@ public class SessionCacheSupportImpl implements SessionCacheSupport{
 	@Override
 	public void save(SessionCache sessionCache)
 	{
-		String key = REDIS_PREFIX + sessionCache.getSessionId();
+		String key = REDIS_PREFIX + sessionCache.getUserId();
 		String value = new Gson().toJson(sessionCache);
 		redisTemplate.opsForValue().set(key, value, VALIDITY_TIME, TimeUnit.SECONDS);
 	}
 
 
 	@Override
-	public SessionCache get(String sessionId)
+	public SessionCache get(String userId)
 	{
-		String key = REDIS_PREFIX + sessionId;
+		String key = REDIS_PREFIX + userId;
 		String value = (String) redisTemplate.opsForValue().get(key);
 
 		if (!StringUtils.isEmpty(value))
@@ -41,9 +41,9 @@ public class SessionCacheSupportImpl implements SessionCacheSupport{
 	}
 
 	@Override
-	public void remove( String sessionId)
+	public void remove( String userId)
 	{
-		String key = REDIS_PREFIX + sessionId;
+		String key = REDIS_PREFIX + userId;
 		redisTemplate.delete(key);
 	}
 }

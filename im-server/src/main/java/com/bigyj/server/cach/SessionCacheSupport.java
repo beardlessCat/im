@@ -7,8 +7,8 @@ public interface SessionCacheSupport {
 	void save(SessionCache s);
 
 	//获取连接信息
-	SessionCache get(String sessionId);
+	SessionCache get(String userId);
 
 	//删除连接信息
-	void remove(String sessionId);
+	void remove(String userId);
 }

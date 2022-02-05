@@ -53,7 +53,7 @@ public class ServerSessionManager {
 		String sessionId = localSession.getSessionId();
 		String userId = localSession.getUserId();
 		ServerNode serverNode = ServerWorker.instance().getServerNode();
-		SessionCache sessionCache = new SessionCache(sessionId,userId,serverNode) ;
+		SessionCache sessionCache = new SessionCache(userId,sessionId,serverNode) ;
 		sessionCacheSupport.save(sessionCache);
 	}
 
