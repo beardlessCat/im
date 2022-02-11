@@ -23,13 +23,13 @@ public class ChatRedirectHandler extends SimpleChannelInboundHandler<ChatRequest
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ChatRequestMessage msg) throws Exception {
 
-		//反向导航
-		LocalSession session = ctx.channel().attr(LocalSession.SESSION_KEY).get();
-		//判断是否登录
-		if (null == session || !session.isLogin()) {
-			logger.error("用户尚未登录，不能发送消息");
-			return;
-		}
+//		//反向导航 fixme 服务之间连接登录状态的问题
+//		LocalSession session = ctx.channel().attr(LocalSession.SESSION_KEY).get();
+//		//判断是否登录
+//		if (null == session || !session.isLogin()) {
+//			logger.error("用户尚未登录，不能发送消息");
+//			return;
+//		}
 		this.action(msg,ctx);
 	}
 

@@ -4,6 +4,7 @@ import com.bigyj.entity.ServerNode;
 import com.bigyj.message.ChatRequestMessage;
 import com.bigyj.message.LoginRequestMessage;
 import com.bigyj.message.PingMessage;
+import com.bigyj.message.ServerPeerConnectedMessage;
 import com.bigyj.protocol.ChatMessageCodec;
 import com.bigyj.protocol.ProtocolFrameDecoder;
 import com.bigyj.server.worker.ServerWorker;
@@ -27,7 +28,7 @@ public class ServerPeerSender {
 	private Channel channel ;
 	private Bootstrap bootstrap;
 	private EventLoopGroup eventLoopGroup;
-	private static final int WRITE_IDLE_GAP = 15;
+	private static final int WRITE_IDLE_GAP = 150;
 
 	public ServerPeerSender() {
 		bootstrap = new Bootstrap();
@@ -61,7 +62,7 @@ public class ServerPeerSender {
 							//服务端认证
 							@Override
 							public void channelActive(ChannelHandlerContext ctx) throws Exception {
-								ctx.writeAndFlush(new LoginRequestMessage("server","123"));
+								ctx.writeAndFlush(new ServerPeerConnectedMessage());
 							}
 						});
 						//服务间的重连 fixme

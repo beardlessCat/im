@@ -13,7 +13,6 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,7 +26,7 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
 
     private DisconnectedHandler disconnectedHandler = new DisconnectedHandler();
 
-    private GroupChatMessageHandler groupChatMessageHandler = new GroupChatMessageHandler();
+    private GroupMessageSendHandler groupMessageSendHandler = new GroupMessageSendHandler();
     @Autowired
     private ChatRedirectHandler chatRedirectHandler ;
 
@@ -52,7 +51,6 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
         //保存channel信息
         LocalSession serverSession = new LocalSession(ctx.channel());
         serverSession.setUser(MemoryUserManager.getUserByName(username));
-        logger.info(serverSession.getUser().getUserName()+"登录成功!");
         serverSession.bind();
 
         //连接信息保存至redis数据库
@@ -63,7 +61,7 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
             //消息发送成功
             if (future.isSuccess()) {
                 //增加心跳handler
-                ctx.pipeline().addLast(new IdleStateHandler(20, 0, 0));
+                ctx.pipeline().addLast(new IdleStateHandler(200, 0, 0));
                 // ChannelDuplexHandler 可以同时作为入站和出站处理器
                 ctx.pipeline().addLast(new ChannelDuplexHandler() {
                     // 用来触发特殊事件
@@ -72,7 +70,7 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
                         IdleStateEvent event = (IdleStateEvent) evt;
                         // 触发了读空闲事件·
                         if (event.state() == IdleState.READER_IDLE) {
-                            logger.info("已经 5s 没有读到数据了");
+                            logger.info("已经 200s 没有读到数据了");
                             ctx.channel().close();
                         }
                     }
@@ -80,7 +78,7 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
                 //增加聊天的handler
                 ctx.pipeline().addLast("chat",  chatRedirectHandler);
                 //增加群聊handler
-                ctx.pipeline().addLast("groupChat",  groupChatMessageHandler);
+                ctx.pipeline().addLast("groupChat", groupMessageSendHandler);
                 //增加退出的handler
                 ctx.pipeline().addLast("logout", disconnectedHandler);
             }else {

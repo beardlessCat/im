@@ -1,12 +1,10 @@
 package com.bigyj.server.session;
 
-import com.bigyj.message.ChatRequestMessage;
-import com.bigyj.message.GroupChatResponseMessage;
+import com.bigyj.message.GroupChatRequestMessage;
 
 public abstract class AbstractServerSession implements ServerSession{
     @Override
-    public boolean writeGroupMessage(GroupChatResponseMessage groupChatResponseMessage) {
-        this.writeAndFlush(new ChatRequestMessage());
+    public boolean writeGroupMessage(GroupChatRequestMessage groupChatRequestMessage) {
         return false;
     }
 }

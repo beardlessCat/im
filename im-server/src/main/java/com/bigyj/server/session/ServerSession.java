@@ -1,13 +1,13 @@
 package com.bigyj.server.session;
 
 import com.bigyj.message.ChatRequestMessage;
-import com.bigyj.message.GroupChatResponseMessage;
+import com.bigyj.message.GroupChatRequestMessage;
 
 public interface ServerSession {
 
 	boolean writeAndFlush(ChatRequestMessage chatRequestMessage);
 
-	boolean writeGroupMessage(GroupChatResponseMessage groupChatResponseMessage );
+	boolean writeGroupMessage(GroupChatRequestMessage groupChatRequestMessage );
 
 	String getSessionId();
 

@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 	Scanner scanner = new Scanner(System.in);
 	CountDownLatch WAIT_FOR_LOGIN = new CountDownLatch(1);
-	private static final int WRITE_IDLE_GAP = 15;
+	private static final int WRITE_IDLE_GAP = 150;
 
 	AtomicBoolean LOGIN = new AtomicBoolean(false);
 	AtomicBoolean EXIT = new AtomicBoolean(false);

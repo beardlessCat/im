@@ -30,6 +30,9 @@ public abstract class Message implements Serializable {
     public static final int GroupChatResponseMessage = 5;
     public static final int PingMessage = 6;
     public static final int PongMessage = 7;
+    public static final int ServerPeerConnectedMessage = 8 ;
+    public static final int GroupRemoteChatRequestMessage = 9 ;
+
     /**
      * 请求类型 byte 值
      */
