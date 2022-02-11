@@ -1,5 +1,7 @@
 package com.bigyj.server.cach;
 
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSONObject;
@@ -46,4 +48,5 @@ public class SessionCacheSupportImpl implements SessionCacheSupport{
 		String key = REDIS_PREFIX + userId;
 		redisTemplate.delete(key);
 	}
+
 }

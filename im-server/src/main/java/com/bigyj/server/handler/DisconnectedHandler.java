@@ -12,12 +12,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * 客户端退出处理逻辑
- * fixme 调整客户端绑定逻辑
  */
 @Slf4j
 @Component
 @ChannelHandler.Sharable
-public class QuitHandler extends ChannelInboundHandlerAdapter {
+public class DisconnectedHandler extends ChannelInboundHandlerAdapter {
     @Autowired
     private SessionCacheSupport sessionCacheSupport;
 
@@ -32,13 +31,12 @@ public class QuitHandler extends ChannelInboundHandlerAdapter {
         logger.info("客户端断开连接");
     }
 
-//    @Override
-//    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-//
-//        this.clientDisconnected(ctx);
-//        logger.info("客户端异常断开连接");
-//
-//    }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        this.clientDisconnected(ctx);
+        logger.info("客户端异常断开连接");
+
+    }
 
     /**
      * 客户单主动断开连接或异常断开连接

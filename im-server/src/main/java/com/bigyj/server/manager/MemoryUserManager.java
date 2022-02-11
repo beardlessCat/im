@@ -13,6 +13,8 @@ public class MemoryUserManager {
         users.put("jerry",new User("2","123","jerry"));
         users.put("betty",new User("3","123","betty"));
         users.put("cook",new User("4","123","cook"));
+        users.put("server",new User("server","123","server"));
+
     }
     public static User getUserByName(String userName) {
         return users.get(userName);

@@ -11,4 +11,5 @@ public interface SessionCacheSupport {
 
 	//删除连接信息
 	void remove(String userId);
+
 }

@@ -15,9 +15,9 @@ import java.util.UUID;
 
 @Slf4j
 @Data
-public class LocalSession implements ServerSession {
+public class LocalSession extends AbstractServerSession {
 	public static final AttributeKey<String> KEY_USER_ID =
-			AttributeKey.valueOf("key_user_id");
+			AttributeKey.valueOf("KEY_USER_ID");
 
 	public static final AttributeKey<LocalSession> SESSION_KEY =
 			AttributeKey.valueOf("SESSION_KEY");
@@ -48,6 +48,7 @@ public class LocalSession implements ServerSession {
 			return true;
 		}
 	}
+
 
 	@Override
 	public String getSessionId() {
@@ -85,20 +86,5 @@ public class LocalSession implements ServerSession {
 		LocalSessionHolder.addServerSession(this);
 		isLogin = true;
 		return this;
-	}
-
-	public static void closeSession(ChannelHandlerContext ctx) {
-		LocalSession session =
-				ctx.channel().attr(LocalSession.SESSION_KEY).get();
-
-		if (null != session && session.isValid()) {
-			session.close();
-			LocalSessionHolder.removeServerSession(session.getUser().getUid());
-		}
-	}
-
-
-	public synchronized void close() {
-		channel.close();
 	}
 }

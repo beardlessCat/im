@@ -7,7 +7,7 @@ import com.bigyj.server.worker.ServerRouterWorker;
 import lombok.Data;
 
 @Data
-public class RemoteSession implements ServerSession {
+public class RemoteSession extends AbstractServerSession {
 	private SessionCache sessionCache;
 
 	public RemoteSession(SessionCache sessionCache) {

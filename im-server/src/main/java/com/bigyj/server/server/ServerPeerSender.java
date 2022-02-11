@@ -2,6 +2,7 @@ package com.bigyj.server.server;
 
 import com.bigyj.entity.ServerNode;
 import com.bigyj.message.ChatRequestMessage;
+import com.bigyj.message.LoginRequestMessage;
 import com.bigyj.message.PingMessage;
 import com.bigyj.protocol.ChatMessageCodec;
 import com.bigyj.protocol.ProtocolFrameDecoder;
@@ -40,7 +41,7 @@ public class ServerPeerSender {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {
 						ChannelPipeline pipeline = ch.pipeline();
-//						pipeline.addLast(new ProtocolFrameDecoder());
+						pipeline.addLast(new ProtocolFrameDecoder());
 						//编解码handler
 						pipeline.addLast("codec", new ChatMessageCodec());
 						//增加心跳
@@ -54,9 +55,13 @@ public class ServerPeerSender {
 								// 触发了写空闲事件
 								if (event.state() == IdleState.WRITER_IDLE) {
 									logger.debug("{} 没有写数据了，发送一个心跳包[服务间]",WRITE_IDLE_GAP);
-//									ctx.writeAndFlush(new PingMessage());
-									ctx.writeAndFlush(new ChatRequestMessage("betty","tom","serverPeer"));
+									ctx.writeAndFlush(new PingMessage());
 								}
+							}
+							//服务端认证
+							@Override
+							public void channelActive(ChannelHandlerContext ctx) throws Exception {
+								ctx.writeAndFlush(new LoginRequestMessage("server","123"));
 							}
 						});
 						//服务间的重连 fixme

@@ -13,6 +13,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,10 +24,13 @@ import org.springframework.stereotype.Component;
 public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
     @Autowired
     private ServerSessionManager serverSessionManager ;
-    @Autowired
-    private QuitHandler logoutRequestHandler;
+
+    private DisconnectedHandler disconnectedHandler = new DisconnectedHandler();
+
+    private GroupChatMessageHandler groupChatMessageHandler = new GroupChatMessageHandler();
     @Autowired
     private ChatRedirectHandler chatRedirectHandler ;
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
@@ -66,7 +70,7 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
                     @Override
                     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception{
                         IdleStateEvent event = (IdleStateEvent) evt;
-                        // 触发了读空闲事件
+                        // 触发了读空闲事件·
                         if (event.state() == IdleState.READER_IDLE) {
                             logger.info("已经 5s 没有读到数据了");
                             ctx.channel().close();
@@ -75,8 +79,10 @@ public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
                 });
                 //增加聊天的handler
                 ctx.pipeline().addLast("chat",  chatRedirectHandler);
+                //增加群聊handler
+                ctx.pipeline().addLast("groupChat",  groupChatMessageHandler);
                 //增加退出的handler
-                ctx.pipeline().addLast("logout",logoutRequestHandler);
+                ctx.pipeline().addLast("logout", disconnectedHandler);
             }else {
                 logger.error("登录响应消息发送失败！");
             }

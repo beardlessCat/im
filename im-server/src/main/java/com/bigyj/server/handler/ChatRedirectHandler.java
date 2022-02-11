@@ -4,8 +4,8 @@ import com.bigyj.message.ChatRequestMessage;
 import com.bigyj.message.ChatResponseMessage;
 import com.bigyj.server.manager.MemoryUserManager;
 import com.bigyj.server.manager.ServerSessionManager;
+import com.bigyj.server.session.AbstractServerSession;
 import com.bigyj.server.session.LocalSession;
-import com.bigyj.server.session.ServerSession;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 public class ChatRedirectHandler extends SimpleChannelInboundHandler<ChatRequestMessage> {
 	@Autowired
 	private ServerSessionManager serverSessionManager ;
+
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ChatRequestMessage msg) throws Exception {
 
@@ -35,7 +36,7 @@ public class ChatRedirectHandler extends SimpleChannelInboundHandler<ChatRequest
 	private void action(ChatRequestMessage chatRequestMessage,ChannelHandlerContext context) {
 		String userName = chatRequestMessage.getTo();
 		//判断用户是否在线
-		ServerSession serverSession = serverSessionManager.getServerSession(MemoryUserManager.getUserByName(userName).getUid());
+		AbstractServerSession serverSession = serverSessionManager.getServerSession(MemoryUserManager.getUserByName(userName).getUid());
 		if(serverSession == null){
 			this.sentNotOnlineMsg(chatRequestMessage,userName,context);
 		}else {

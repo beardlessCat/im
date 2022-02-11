@@ -4,11 +4,10 @@ import com.bigyj.entity.ServerNode;
 import com.bigyj.entity.SessionCache;
 import com.bigyj.server.cach.SessionCacheSupport;
 import com.bigyj.server.holder.LocalSessionHolder;
-import com.bigyj.server.worker.ServerWorker;
+import com.bigyj.server.session.AbstractServerSession;
 import com.bigyj.server.session.LocalSession;
 import com.bigyj.server.session.RemoteSession;
-import com.bigyj.server.session.ServerSession;
-
+import com.bigyj.server.worker.ServerWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +20,8 @@ public class ServerSessionManager {
 	 * @param userId
 	 * @return
 	 */
-	public ServerSession getServerSession(String userId){
-		ServerSession serverSession = null;
+	public AbstractServerSession getServerSession(String userId){
+		AbstractServerSession serverSession = null;
 		SessionCache sessionCache = sessionCacheSupport.get(userId);
 		//redis中查询不到相关客户端
 		if(sessionCache ==null){

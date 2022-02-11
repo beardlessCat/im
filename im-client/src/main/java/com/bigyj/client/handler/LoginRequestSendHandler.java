@@ -1,9 +1,6 @@
 package com.bigyj.client.handler;
 
-import com.bigyj.message.ChatRequestMessage;
-import com.bigyj.message.LoginRequestMessage;
-import com.bigyj.message.LoginResponseMessage;
-import com.bigyj.message.PingMessage;
+import com.bigyj.message.*;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -33,7 +30,7 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		logger.info("连接建立成功");
 		new Thread(() -> {
-//			while (true) {
+			while (true) {
 				System.out.println("请输入用户名:");
 				String username = scanner.nextLine();
 				if (EXIT.get()) {
@@ -60,11 +57,7 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 				while (true) {
 					System.out.println("==================================");
 					System.out.println("send [username] [content]");
-					System.out.println("gsend [group name] [content]");
-					System.out.println("gcreate [group name] [m1,m2,m3...]");
-					System.out.println("gmembers [group name]");
-					System.out.println("gjoin [group name]");
-					System.out.println("gquit [group name]");
+					System.out.println("gSend [content]");
 					System.out.println("quit");
 					System.out.println("==================================");
 					String command = null;
@@ -81,12 +74,15 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 						case "send":
 							ctx.writeAndFlush(new ChatRequestMessage(username, s[1], s[2]));
 							break;
+						case "gSend":
+							ctx.writeAndFlush(new GroupChatRequestMessage(username,s[1]));
+							break;
 						case "quit":
 							ctx.channel().close();
 							return;
 					}
 				}
-//			}
+			}
 		},"scanner in").start();
 
 	}
@@ -117,7 +113,6 @@ public class LoginRequestSendHandler extends ChannelInboundHandlerAdapter {
 					if (event.state() == IdleState.WRITER_IDLE) {
 						logger.debug("{} 没有写数据了，发送一个心跳包",WRITE_IDLE_GAP);
 						ctx.writeAndFlush(new PingMessage());
-//						ctx.writeAndFlush(new ChatRequestMessage("betty","tom","peer"));
 
 					}
 				}
