@@ -3,6 +3,7 @@ package com.bigyj.server.server;
 import java.net.InetSocketAddress;
 
 import com.bigyj.entity.ServerNode;
+import com.bigyj.monitor.DirectMemoryReporter;
 import com.bigyj.server.initializer.ImServerInitializer;
 import com.bigyj.server.registration.ZkService;
 import com.bigyj.server.worker.ServerRouterWorker;
@@ -70,6 +71,7 @@ public class ImServer {
                         logger.info("本地节点, path={}, id={}", pathRegistered, serverNode.getId());
                         ServerWorker.instance().setServerNode(serverNode);
                         ServerRouterWorker.instance().init();
+                        DirectMemoryReporter.init();
                     } else {
                         logger.error("服务端启动成失败");
                     }

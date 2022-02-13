@@ -13,6 +13,7 @@ import java.util.List;
 
 
 public class ChatMessageCodec extends ByteToMessageCodec<Message> {
+
     @Override
     protected void encode(ChannelHandlerContext ctx, Message msg, ByteBuf out) throws Exception {
         // 1. 4 字节的魔数
@@ -37,7 +38,7 @@ public class ChatMessageCodec extends ByteToMessageCodec<Message> {
         // 8. 写入内容
         out.writeBytes(bytes);
     }
-
+    //解密
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         int magicNum = in.readInt();

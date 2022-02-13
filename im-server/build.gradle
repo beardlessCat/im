@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.projectlombok:lombok:1.18.20'
     implementation project(':im-common')
     implementation libraries.netty
     implementation libraries.springBootStarterWeb

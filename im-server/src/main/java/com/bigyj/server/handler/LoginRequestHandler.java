@@ -6,13 +6,11 @@ import com.bigyj.server.manager.MemoryUserManager;
 import com.bigyj.server.manager.ServerSessionManager;
 import com.bigyj.server.session.LocalSession;
 import com.bigyj.user.User;
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,25 +18,19 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @ChannelHandler.Sharable
-public class LoginRequestHandler extends ChannelInboundHandlerAdapter {
+public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginRequestMessage> {
     @Autowired
     private ServerSessionManager serverSessionManager ;
-
-    private DisconnectedHandler disconnectedHandler = new DisconnectedHandler();
+    @Autowired
+    private DisconnectedHandler disconnectedHandler ;
 
     private GroupMessageSendHandler groupMessageSendHandler = new GroupMessageSendHandler();
     @Autowired
     private ChatRedirectHandler chatRedirectHandler ;
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg)
-            throws Exception {
-        if(!(msg instanceof LoginRequestMessage)){
-            super.channelRead(ctx, msg);
-            return;
-        }
-        LoginRequestMessage loginRequestMessage = (LoginRequestMessage) msg;
-        logger.info("收到请求登录消息"+ msg);
+    protected void channelRead0(ChannelHandlerContext ctx, LoginRequestMessage loginRequestMessage) throws Exception {
+
         String username = loginRequestMessage.getUsername();
         String passWord = loginRequestMessage.getPassword();
         boolean validateSuccess = this.validateUser(username, passWord);

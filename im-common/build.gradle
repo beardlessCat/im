@@ -11,5 +11,6 @@ repositories {
 dependencies {
     implementation libraries.netty
     compileOnly libraries.lombok
+    compileOnly libraries.springBootStarterWeb
     annotationProcessor libraries.lombok
 }

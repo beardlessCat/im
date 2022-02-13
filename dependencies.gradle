@@ -6,7 +6,7 @@ ext {
 
 versions.springBoot = "2.3.4.RELEASE"
 versions.gson = "2.8.5"
-versions.netty = "4.1.30.Final"
+versions.netty = "4.1.45.Final"
 
 pluginIds.springBoot = "org.springframework.boot"
 pluginIds.springDependencyManager = "io.spring.dependency-management"
@@ -42,6 +42,6 @@ libraries.redisson='org.redisson:redisson:3.12.5'
 libraries.protostuffCore ='io.protostuff:protostuff-core:1.6.0'
 libraries.protostuffRuntime ='io.protostuff:protostuff-runtime:1.6.0'
 libraries.gson ='com.google.code.gson:gson:2.8.5'
-libraries.netty='io.netty:netty-all:4.1.30.Final'
+libraries.netty='io.netty:netty-all:4.1.45.Final'
 libraries.curator='org.apache.curator:curator-recipes:4.0.1'
 

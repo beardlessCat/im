@@ -43,13 +43,21 @@ public class DisconnectedHandler extends ChannelInboundHandlerAdapter {
      * @param ctx
      */
     private void clientDisconnected(ChannelHandlerContext ctx) {
-        LocalSession session = LocalSession.getSession(ctx);
-        String userId = session.getUserId();
-        LocalSessionHolder.removeServerSession(userId);
-        //保存channel信息
-        LocalSession serverSession = new LocalSession(ctx.channel());
-        serverSession.setLogin(false);
-        //移除redis缓存新
-        sessionCacheSupport.remove(userId);
+        try {
+            LocalSession session = LocalSession.getSession(ctx);
+            String userId = session.getUserId();
+            LocalSessionHolder.removeServerSession(userId);
+            //保存channel信息
+            LocalSession serverSession = new LocalSession(ctx.channel());
+            serverSession.setLogin(false);
+            //移除redis缓存新
+            sessionCacheSupport.remove(userId);
+        }finally {
+            ctx.channel().close();
+            ctx.close();
+            System.gc();
+        }
+
+
     }
 }

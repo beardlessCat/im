@@ -18,6 +18,9 @@ import org.springframework.stereotype.Component;
 public class ServerPeerConnectedHandler extends SimpleChannelInboundHandler<ServerPeerConnectedMessage> {
     @Autowired
     private ChatServerRedirectHandler chatServerRedirectHandler ;
+    @Autowired
+    private DisconnectedHandler disconnectedHandler ;
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ServerPeerConnectedMessage msg) throws Exception {
         ctx.pipeline().addLast(new IdleStateHandler(200, 0, 0));
@@ -37,6 +40,6 @@ public class ServerPeerConnectedHandler extends SimpleChannelInboundHandler<Serv
         //增加聊天的handler
         ctx.pipeline().addLast("chat", chatServerRedirectHandler);
         //增加退出的handler
-        ctx.pipeline().addLast("logout", new DisconnectedHandler());
+        ctx.pipeline().addLast("logout", disconnectedHandler);
     }
 }

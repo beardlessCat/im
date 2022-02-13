@@ -9,6 +9,7 @@ import com.bigyj.server.session.LocalSession;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,7 +45,8 @@ public class ChatRedirectHandler extends SimpleChannelInboundHandler<ChatRequest
 			if(!result){
 			}
 		}
-
+		//fixme 测试
+		ReferenceCountUtil.retain(chatRequestMessage);
 	}
 
 	/**
