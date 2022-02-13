@@ -1,11 +1,14 @@
 apply plugin: 'java'
 
 dependencies {
+    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     implementation project(':im-common')
     implementation libraries.netty
     implementation libraries.springBootStarterWeb
     implementation libraries.gson
     implementation libraries.fastjson
     implementation libraries.curator
+    implementation libraries.springBootStarterDataRedis
+
 
 }

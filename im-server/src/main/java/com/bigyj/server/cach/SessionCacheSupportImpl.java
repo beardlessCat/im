@@ -1,17 +1,14 @@
 package com.bigyj.server.cach;
 
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import com.alibaba.fastjson.JSONObject;
 import com.bigyj.entity.SessionCache;
 import com.google.gson.Gson;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.concurrent.TimeUnit;
 @Component
 public class SessionCacheSupportImpl implements SessionCacheSupport{
 	public static final String REDIS_PREFIX = "SessionCache:id:";

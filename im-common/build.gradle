@@ -12,5 +12,4 @@ dependencies {
     implementation libraries.netty
     compileOnly libraries.lombok
     annotationProcessor libraries.lombok
-
 }

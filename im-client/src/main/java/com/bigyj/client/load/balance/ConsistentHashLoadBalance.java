@@ -8,6 +8,7 @@ import com.bigyj.entity.ServerNode;
  * 一致性HASH
  */
 public class ConsistentHashLoadBalance extends AbstractLoadBalance{
+	public static final String NAME = "consistenthash";
 	@Override
 	protected ServerNode doSelect(List<ServerNode> serverNodes) {
 		String remoteIp = "127.0.0.1";

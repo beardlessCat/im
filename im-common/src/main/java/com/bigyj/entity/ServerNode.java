@@ -34,4 +34,9 @@ public class ServerNode implements Serializable {
 	public String getAddress(){
 		return this.host+":"+this.port;
 	}
+
+	@Override
+	public String toString() {
+		return host+":"+port+":"+id;
+	}
 }
