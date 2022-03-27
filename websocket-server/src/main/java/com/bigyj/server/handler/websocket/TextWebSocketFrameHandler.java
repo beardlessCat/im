@@ -17,7 +17,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     //读到客户端的内容并且向客户端去写内容
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
-        System.out.println("收到消息："+msg.text());
+        // System.out.println("收到消息："+msg.text());
         WebSocketMessage webSocketMessage = new Gson().fromJson(msg.text(), WebSocketMessage.class);
         SecurityServerHandler.SecurityCheckComplete securityCheckComplete = ctx.channel().attr(SecurityServerHandler.SECURITY_CHECK_COMPLETE_ATTRIBUTE_KEY).get();
         webSocketMessage.setFrom(securityCheckComplete.getUserId());

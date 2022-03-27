@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.bigyj.entity.ServerNode;
 import com.bigyj.server.config.NettyServerConfig;
 import com.bigyj.server.config.SocketConfig;
-import com.bigyj.server.initializer.ImServerInitializer;
+import com.bigyj.server.initializer.ServerInitializer;
 import com.bigyj.server.registration.ZkService;
 import com.bigyj.server.worker.ServerRouterWorker;
 import com.bigyj.server.worker.ServerWorker;
@@ -56,7 +56,7 @@ public class WebsocketServer {
             serverBootstrap.group(bossGroup, workerGroup)
             //2 设置nio类型的channel
             .channel(channelClass)
-            .childHandler(new ImServerInitializer())
+            .childHandler(new ServerInitializer())
             .localAddress(new InetSocketAddress(PORT));
 
             applyConnectionOptions(serverBootstrap);

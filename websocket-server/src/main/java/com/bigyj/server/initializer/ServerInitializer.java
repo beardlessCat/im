@@ -7,7 +7,7 @@ import io.netty.channel.socket.SocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ImServerInitializer extends ChannelInitializer<SocketChannel> {
+public class ServerInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {

@@ -31,7 +31,7 @@
 
 
     //参数就是与服务器连接的地址
-    socket = new WebSocket("ws://10.1.112.132:18080/ws?tom");
+    socket = new WebSocket("ws://ws.repo/ws?tom");
 
     //客户端收到服务器消息的时候就会执行这个回调方法
     socket.onmessage = function (event) {
