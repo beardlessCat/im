@@ -20,6 +20,11 @@ public class RandomLoadBalance extends AbstractLoadBalance{
 			total+=weight;
 			weights[i] = total;
 		}
+		//节点权重全部为0，随机选择一个节点 fix #3  https://github.com/beardlessCat/im/issues/3
+		if (total==0){
+			//select a node randomly
+			return serverNodes.get(ThreadLocalRandom.current().nextInt(serverNodes.size()));
+		}
 		//类似于抽奖算法
 		int randomIndex = ThreadLocalRandom.current().nextInt(weights[size - 1]);
 		for(int index = 0;index<size;index++){
@@ -27,6 +32,7 @@ public class RandomLoadBalance extends AbstractLoadBalance{
 				return serverNodes.get(index);
 			}
 		}
+		//兜底
 		return serverNodes.get(ThreadLocalRandom.current().nextInt(serverNodes.size()));
 	}
 }
